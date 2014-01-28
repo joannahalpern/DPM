@@ -40,21 +40,34 @@ public class Odometer extends Thread {
 
 		while (true) {
 			updateStart = System.currentTimeMillis();
-			// put (some of) your odometer code here
+			//the distance traveled by each wheel is a function of the wheel radius and the tachometer's count in radians
+			//we subtract the last distance to get the change in distance
 			leftDistance = (WHEEL_RADIUS*Motor.A.getTachoCount())*(Math.PI/180) - lastLeftDistance;
 			rightDistance = (WHEEL_RADIUS*Motor.B.getTachoCount())*(Math.PI/180) - lastRightDistance;
 			
+			//center distance is the average of the changes of left and right distances traveled
 			centerDistance = (leftDistance+rightDistance)/2;
+			
+			//delta theta is the change in angle
 			deltaTheta = (leftDistance-rightDistance)/WIDTH;
+			
 			synchronized (lock) {
-				// don't use the variables x, y, or theta anywhere but here!
+				//the new x is the old x plus the new x calculated bellow
+				//Here theta is converted to radians
 				x += centerDistance*Math.sin(theta*(Math.PI/180) + deltaTheta/2);
 				y += centerDistance*Math.cos(theta*(Math.PI/180) + deltaTheta/2);
-				theta += (deltaTheta*(180/Math.PI)); //put theta in degrees
+				
+				//the new theta is the old theta plus the calculated change in theta (deltaTheta) in degrees
+				theta += (deltaTheta*(180/Math.PI));
+				
+				//This puts theta in the range of 0 to 360
 				theta = (360 + theta) % 360;
 			}
+			
+			//now we update the lastDistance of left and right wheels to be used in the next iteration of the loop (21 lines up)
 			lastLeftDistance += leftDistance;
 			lastRightDistance += rightDistance;
+			
 			// this ensures that the odometer only runs once every period
 			updateEnd = System.currentTimeMillis();
 			if (updateEnd - updateStart < ODOMETER_PERIOD) {
@@ -81,15 +94,6 @@ public class Odometer extends Thread {
 				position[2] = theta;
 		}
 	}
-	
-	public boolean isTurning(){
-		double a = Math.abs(leftDistance-rightDistance);
-		if (a > 1){
-			return true;
-		}
-		return false;
-	}
-
 	public double getX() {
 		double result;
 
@@ -150,13 +154,5 @@ public class Odometer extends Thread {
 		synchronized (lock) {
 			this.theta = theta;
 		}
-	}
-
-	public double getDis1() {
-		return leftDistance;
-	}
-
-	public double getDis2() {
-		return rightDistance;
 	}
 }

@@ -30,10 +30,6 @@ public class OdometryDisplay extends Thread {
 			LCD.drawString("X:              ", 0, 0);
 			LCD.drawString("Y:              ", 0, 1);
 			LCD.drawString("T:              ", 0, 2);
-			LCD.drawString("LightVal: " + OdometryCorrection.getLightVal(), 0, 4);
-			LCD.drawString("Turning: " + odometer.isTurning(), 0, 5);
-			double dis = odometer.getDis1()-odometer.getDis2();
-			LCD.drawString("dis 1-2:" + dis ,0, 5);
 
 			// get the odometry information
 			odometer.getPosition(position, new boolean[] { true, true, true });
