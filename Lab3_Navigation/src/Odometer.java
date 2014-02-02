@@ -55,7 +55,7 @@ public class Odometer extends Thread {
 			centerDistance = (leftDistance + rightDistance) / 2;
 
 			// delta theta is the change in angle
-			deltaTheta = (leftDistance - rightDistance) / WIDTH;
+			deltaTheta = (rightDistance - leftDistance) / WIDTH;
 
 			synchronized (lock) {
 				// the new x is the old x plus the new x calculated bellow

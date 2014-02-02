@@ -18,7 +18,6 @@ public class Lab3 {
 		// some objects that need to be instantiated
 		Odometer odometer = new Odometer();
 		OdometryDisplay odometryDisplay = new OdometryDisplay(odometer);
-		OdometryCorrection odometryCorrection = new OdometryCorrection(odometer);
 
 		do {
 			// clear the display
@@ -28,8 +27,7 @@ public class Lab3 {
 			LCD.drawString("< Left | Right >", 0, 0);
 			LCD.drawString("       |        ", 0, 1);
 			LCD.drawString(" Float | Drive  ", 0, 2);
-			LCD.drawString("motors | in a   ", 0, 3);
-			LCD.drawString("       | square ", 0, 4);
+			LCD.drawString("motors |        ", 0, 3);
 
 			buttonChoice = Button.waitForAnyPress();
 		} while (buttonChoice != Button.ID_LEFT
@@ -48,13 +46,17 @@ public class Lab3 {
 			// start the odometer, the odometry display and (possibly) the
 			// odometry correction
 			odometer.start();
-			odometryCorrection.start();
 			odometryDisplay.start();
 
 			// spawn a new Thread to avoid SquareDriver.drive() from blocking
 			(new Thread() {
 				public void run() {
-					SquareDriver.drive(Motor.A, Motor.B, WHEELRADIUS, WHEELRADIUS, WIDTH); // USE MEASURED WHEEL RADIUS AND VEHICLE WIDTH
+					Odometer odometer = new Odometer();
+					DriveToPoint p1 = new DriveToPoint(odometer);
+//					p1.travelTo(30, 60);
+					p1.rotateWheel();
+//					p1.go();
+//					p1.turnTo(30);
 				}
 			}).start();
 		}

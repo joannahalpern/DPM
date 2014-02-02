@@ -35,8 +35,8 @@ public class OdometryCorrection extends Thread {
 			double x, y, theta;
 
 			lightVal = sensor.getNormalizedLightValue();
-			if (lightVal < LIGHT_THRESHOLD) { //TODO: is this saying "if it does not see a line"?
-				calculateGridOffset(odometer);	//TODO: place this properly
+			if (lightVal < LIGHT_THRESHOLD) {
+				calculateGridOffset(odometer);
 				
 				theta = odometer.getTheta();
 
