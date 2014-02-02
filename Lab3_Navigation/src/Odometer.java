@@ -1,6 +1,6 @@
 /*
- * DPM Lab 3 - Odometer
- * 
+ * DPM Lab 2 - Odometer
+ *
  * Harris Miller 260499543
  * Joanna Halpern 260410826
  */
@@ -9,9 +9,11 @@ import lejos.nxt.Motor;
 public class Odometer extends Thread {
 	// robot position and angle
 	private double x, y, theta;
-	// distance each wheel travels and change in angle (theta) per ODOMETER_PERIOD (25ms)
-	private double  deltaTheta, leftDistance, rightDistance;
-	// calculated average of left and right distance traveled. The distance the center travels.
+	// distance each wheel travels and change in angle (theta) per
+	// ODOMETER_PERIOD (25ms)
+	private double deltaTheta, leftDistance, rightDistance;
+	// calculated average of left and right distance traveled. The distance the
+	// center travels.
 	private double centerDistance;
 	// The distance traveled by left and right wheel over the previous cycle
 	private double lastLeftDistance, lastRightDistance;
@@ -40,34 +42,42 @@ public class Odometer extends Thread {
 
 		while (true) {
 			updateStart = System.currentTimeMillis();
-			//the distance traveled by each wheel is a function of the wheel radius and the tachometer's count in radians
-			//we subtract the last distance to get the change in distance
-			leftDistance = (WHEEL_RADIUS*Motor.A.getTachoCount())*(Math.PI/180) - lastLeftDistance;
-			rightDistance = (WHEEL_RADIUS*Motor.B.getTachoCount())*(Math.PI/180) - lastRightDistance;
-			
-			//center distance is the average of the changes of left and right distances traveled
-			centerDistance = (leftDistance+rightDistance)/2;
-			
-			//delta theta is the change in angle
-			deltaTheta = (leftDistance-rightDistance)/WIDTH;
-			
+			// the distance traveled by each wheel is a function of the wheel
+			// radius and the tachometer's count in radians
+			// we subtract the last distance to get the change in distance
+			leftDistance = (WHEEL_RADIUS * Motor.A.getTachoCount())
+					* (Math.PI / 180) - lastLeftDistance;
+			rightDistance = (WHEEL_RADIUS * Motor.B.getTachoCount())
+					* (Math.PI / 180) - lastRightDistance;
+
+			// center distance is the average of the changes of left and right
+			// distances traveled
+			centerDistance = (leftDistance + rightDistance) / 2;
+
+			// delta theta is the change in angle
+			deltaTheta = (leftDistance - rightDistance) / WIDTH;
+
 			synchronized (lock) {
-				//the new x is the old x plus the new x calculated bellow
-				//Here theta is converted to radians
-				x += centerDistance*Math.sin(theta*(Math.PI/180) + deltaTheta/2);
-				y += centerDistance*Math.cos(theta*(Math.PI/180) + deltaTheta/2);
-				
-				//the new theta is the old theta plus the calculated change in theta (deltaTheta) in degrees
-				theta += (deltaTheta*(180/Math.PI));
-				
-				//This puts theta in the range of 0 to 360
+				// the new x is the old x plus the new x calculated bellow
+				// Here theta is converted to radians
+				x += centerDistance
+						* Math.sin(theta * (Math.PI / 180) + deltaTheta / 2);
+				y += centerDistance
+						* Math.cos(theta * (Math.PI / 180) + deltaTheta / 2);
+
+				// the new theta is the old theta plus the calculated change in
+				// theta (deltaTheta) in degrees
+				theta += (deltaTheta * (180 / Math.PI));
+
+				// This puts theta in the range of 0 to 360
 				theta = (360 + theta) % 360;
 			}
-			
-			//now we update the lastDistance of left and right wheels to be used in the next iteration of the loop (21 lines up)
+
+			// now we update the lastDistance of left and right wheels to be
+			// used in the next iteration of the loop (21 lines up)
 			lastLeftDistance += leftDistance;
 			lastRightDistance += rightDistance;
-			
+
 			// this ensures that the odometer only runs once every period
 			updateEnd = System.currentTimeMillis();
 			if (updateEnd - updateStart < ODOMETER_PERIOD) {
@@ -94,6 +104,7 @@ public class Odometer extends Thread {
 				position[2] = theta;
 		}
 	}
+
 	public double getX() {
 		double result;
 
@@ -124,7 +135,6 @@ public class Odometer extends Thread {
 		return result;
 	}
 
-	
 	// mutators
 	public void setPosition(double[] position, boolean[] update) {
 		// ensure that the values don't change while the odometer is running
