@@ -10,22 +10,16 @@ public class DriveToPoint extends Thread{
 	private static final int FWD_SPEED = 150;
 	private static final double WIDTH = 14.9;
 	private static final double WHEEL_RADIUS = 2.075;
-	private Odometer odometer;
-	private double xCurrent;
-	private double yCurrent;
-	private double thetaCurrent;
-	private final NXTRegulatedMotor leftMotor = Motor.A, rightMotor = Motor.B;
+	private static Odometer odometer;
+	private static double xCurrent;
+	private static double yCurrent;
+	private static double thetaCurrent;
+	private final static NXTRegulatedMotor leftMotor = Motor.A;
+	private final static NXTRegulatedMotor rightMotor = Motor.B;
+	public static int dT = 0;
 	
 	
-	public DriveToPoint(Odometer odometer) {
-		this.odometer = odometer;
-		this.xCurrent = odometer.getX();
-		this.yCurrent = odometer.getY();
-		this.thetaCurrent = odometer.getTheta();
-		for (NXTRegulatedMotor motor : new NXTRegulatedMotor[] { leftMotor, rightMotor }) {
-			motor.stop();
-			motor.setAcceleration(1500);
-		}
+	public DriveToPoint() {
 	}
 	
 	/**
@@ -34,16 +28,31 @@ public class DriveToPoint extends Thread{
 	 * set the motor speed to forward(straight). This ensures that the
 	 * heading is updated until goal is reached.
 	 */
-	public void travelTo(double xDestination, double yDestination) {
+	public static void travelTo(double xDestination, double yDestination, Odometer odometer) {
+		for (NXTRegulatedMotor motor : new NXTRegulatedMotor[] { leftMotor, rightMotor }) {
+			motor.stop();
+			motor.setAcceleration(1500);
+			xCurrent = odometer.getX();
+			yCurrent = odometer.getY();
+		}
+		double deltaTheta;
 		while ( (xCurrent != xDestination) && (yCurrent != yDestination)){//TODO: add acceptable bandwidth around destination
-			double deltaTheta = calculateDeltaTheta(xDestination, yDestination); //this is the change in angle needed to get to the destination
+			deltaTheta = calculateDeltaTheta(xDestination, yDestination); //this is the change in angle needed to get to the destination
 			if(Math.abs(deltaTheta) > 1){ // if theta has significant error
+				
 				turnTo(deltaTheta);
 			}
 			leftMotor.forward();
 			rightMotor.forward();
 			leftMotor.setSpeed(FWD_SPEED);
 			rightMotor.setSpeed(FWD_SPEED);
+			
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				// there is nothing to be done here because it is not expected that
+				// the odometer will be interrupted by another thread
+			}
 			
 			xCurrent = odometer.getX();
 			yCurrent = odometer.getY();
@@ -54,13 +63,14 @@ public class DriveToPoint extends Thread{
 	 * This method causes the robot to turn (on point) to the absolute heading
 	 * theta. This method should turn a MINIMAL angle to it's target.
 	 */
-	public void turnTo(double deltaTheta) {
-		int turningAngle = (int) (deltaTheta*WIDTH/2/WHEEL_RADIUS*180/Math.PI);
-		leftMotor.setSpeed(0);
-		rightMotor.setSpeed(0);
-		leftMotor.rotate(30);
-//		leftMotor.rotate(turningAngle, true);
-//		rightMotor.rotate(-turningAngle, false); 
+	public static void turnTo(double deltaTheta) {
+		deltaTheta = ((360+deltaTheta)%360)-180; //converts deltaTheta to an angle between -180 and 180
+		int turningAngle = (int) (deltaTheta*WIDTH/2/WHEEL_RADIUS);
+		//TODO make the turning angle minimal
+		leftMotor.setSpeed(75);
+		rightMotor.setSpeed(75);
+		leftMotor.rotate(-turningAngle, true);
+		rightMotor.rotate(turningAngle, false); //turnTo minimal angle
 	}
 
 	/**
@@ -72,21 +82,34 @@ public class DriveToPoint extends Thread{
 	}
 
 
-	private double calculateDeltaTheta(double xDes, double yDes) {//TODO: if problems: test angle function plz
+	private static double calculateDeltaTheta(double xDes, double yDes) {//TODO: if problems: test angle function plz
 		double thetaDestination = Math.atan2(yDes-yCurrent, xDes-xCurrent) - 90;// -90 b/c atan2 returns an angle relative to pos-x axis
 		double deltaTheta = thetaDestination - thetaCurrent;
+		dT = (int) deltaTheta;
 		return deltaTheta;
 	}
-
-	public void go(){
+	/**
+	 * for testing
+	 */
+	public static void go(){
 		leftMotor.forward();
 		rightMotor.forward();
 		leftMotor.setSpeed(FWD_SPEED);
 		rightMotor.setSpeed(FWD_SPEED);
 	}
-	
+	/**
+	 * for testing
+	 */
 	public void rotateWheel(){
-		leftMotor.setSpeed(0);
+		leftMotor.setSpeed(30);
 		leftMotor.rotateTo(30);
+	}
+
+	public static double getxCurrent() {
+		return xCurrent;
+	}
+
+	public static double getyCurrent() {
+		return yCurrent;
 	}
 }

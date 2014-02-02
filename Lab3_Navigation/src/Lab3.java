@@ -16,7 +16,7 @@ public class Lab3 {
 		int buttonChoice;
 
 		// some objects that need to be instantiated
-		Odometer odometer = new Odometer();
+		final Odometer odometer = new Odometer();
 		OdometryDisplay odometryDisplay = new OdometryDisplay(odometer);
 
 		do {
@@ -51,12 +51,8 @@ public class Lab3 {
 			// spawn a new Thread to avoid SquareDriver.drive() from blocking
 			(new Thread() {
 				public void run() {
-					Odometer odometer = new Odometer();
-					DriveToPoint p1 = new DriveToPoint(odometer);
-//					p1.travelTo(30, 60);
-					p1.rotateWheel();
-//					p1.go();
-//					p1.turnTo(30);
+//					DriveToPoint p1 = new DriveToPoint(odometer);
+					DriveToPoint.travelTo(30, 60, odometer);
 				}
 			}).start();
 		}
