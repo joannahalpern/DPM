@@ -1,3 +1,5 @@
+//TODO: PROBLEM is that is it is not getting the odometer readings
+
 import lejos.nxt.Motor;
 import lejos.nxt.NXTRegulatedMotor;
 
@@ -7,10 +9,10 @@ import lejos.nxt.NXTRegulatedMotor;
  *
  */
 public class DriveToPoint extends Thread{
+	private Odometer odometer;
 	private static final int FWD_SPEED = 150;
 	private static final double WIDTH = 14.9;
 	private static final double WHEEL_RADIUS = 2.075;
-	private static Odometer odometer;
 	private static double xCurrent;
 	private static double yCurrent;
 	private static double thetaCurrent;
@@ -19,7 +21,25 @@ public class DriveToPoint extends Thread{
 	public static int dT = 0;
 	
 	
-	public DriveToPoint() {
+	
+	public DriveToPoint(Odometer odometer) {
+		this.odometer = odometer;
+	}
+	
+	public void run(){
+		for (NXTRegulatedMotor motor : new NXTRegulatedMotor[] { leftMotor, rightMotor }) {
+			motor.stop();
+			motor.setAcceleration(1500);
+			xCurrent = odometer.getX();  //TODO: check if necessary
+			yCurrent = odometer.getY();
+		}
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// there is nothing to be done here because it is not expected that
+			// the odometer will be interrupted by another thread
+		}
+		travelTo(60, 30); //TODO: remove odo from travelTo
 	}
 	
 	/**
@@ -28,13 +48,7 @@ public class DriveToPoint extends Thread{
 	 * set the motor speed to forward(straight). This ensures that the
 	 * heading is updated until goal is reached.
 	 */
-	public static void travelTo(double xDestination, double yDestination, Odometer odometer) {
-		for (NXTRegulatedMotor motor : new NXTRegulatedMotor[] { leftMotor, rightMotor }) {
-			motor.stop();
-			motor.setAcceleration(1500);
-			xCurrent = odometer.getX();
-			yCurrent = odometer.getY();
-		}
+	public static void travelTo(double xDestination, double yDestination) {
 		double deltaTheta;
 		while ( (xCurrent != xDestination) && (yCurrent != yDestination)){//TODO: add acceptable bandwidth around destination
 			deltaTheta = calculateDeltaTheta(xDestination, yDestination); //this is the change in angle needed to get to the destination
@@ -47,12 +61,6 @@ public class DriveToPoint extends Thread{
 			leftMotor.setSpeed(FWD_SPEED);
 			rightMotor.setSpeed(FWD_SPEED);
 			
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-				// there is nothing to be done here because it is not expected that
-				// the odometer will be interrupted by another thread
-			}
 			
 			xCurrent = odometer.getX();
 			yCurrent = odometer.getY();
