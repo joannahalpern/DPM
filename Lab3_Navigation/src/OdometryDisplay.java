@@ -32,6 +32,8 @@ public class OdometryDisplay extends Thread {
 			LCD.drawString("T:              ", 0, 2);
 			LCD.drawString("deltaTheta: " + DriveToPoint.dT, 0, 4);
 			LCD.drawString("yCurrent: " + DriveToPoint.getyCurrent(), 0, 5);
+			LCD.drawString("thetaC: " + DriveToPoint.getThetaCurrent(), 0, 6);
+			
 
 			// get the odometry information
 			odometer.getPosition(position, new boolean[] { true, true, true });
