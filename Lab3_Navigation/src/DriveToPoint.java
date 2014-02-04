@@ -1,14 +1,20 @@
+/*
+ * DPM Lab 2 - Lab2.java
+ * 
+ * Harris Miller 260499543
+ * Joanna Halpern 260410826
+ */
 package src;
 
 import lejos.nxt.Motor;
 import lejos.nxt.NXTRegulatedMotor;
 
 /**
- * Given a cartesian coordinate, this class controls the motors to drive to that
- * point.
+ * This class controls the motors to drive to specific points which are the arguments given in travelTo(x, y)
+ * It works by first calculating it's deltaTheta, which is the angle that the robot needs to rotate to go towards the coordinate
+ * 
  * 
  * @author Joanna and Harris
- * 
  */
 public class DriveToPoint extends Thread {
 	private Odometer odometer;
