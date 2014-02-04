@@ -1,3 +1,4 @@
+package src;
 /*
  * DPM Lab 2 - Odometer
  *
@@ -60,7 +61,7 @@ public class Odometer extends Thread {
 			synchronized (lock) {
 				// the new x is the old x plus the new x calculated bellow
 				// Here theta is converted to radians
-				x += centerDistance
+				x -= centerDistance
 						* Math.sin(theta * (Math.PI / 180) + deltaTheta / 2);
 				y += centerDistance
 						* Math.cos(theta * (Math.PI / 180) + deltaTheta / 2);

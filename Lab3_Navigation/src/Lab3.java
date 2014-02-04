@@ -1,3 +1,4 @@
+package src;
 /*
  * DPM Lab 2 - Lab2.java
  * 
@@ -25,10 +26,9 @@ public class Lab3 {
 			LCD.clear();
 
 			// ask the user whether the motors should drive in a square or float
-			LCD.drawString("< Left | Right >", 0, 0);
-			LCD.drawString("       |        ", 0, 1);
-			LCD.drawString(" Float | Drive  ", 0, 2);
-			LCD.drawString("motors |        ", 0, 3);
+			LCD.drawString("<      |       >", 0, 0);
+			LCD.drawString(" Float | Drive  ", 0, 1);
+			LCD.drawString("motors |        ", 0, 2);
 
 			buttonChoice = Button.waitForAnyPress();
 		} while (buttonChoice != Button.ID_LEFT
@@ -52,7 +52,7 @@ public class Lab3 {
 			
 
 			// spawn a new Thread to avoid SquareDriver.drive() from blocking
-			(new Thread() { //TODO: is this new thread neeed now?
+			(new Thread() {
 				public void run() {
 				}
 			}).start();

@@ -1,3 +1,5 @@
+package src;
+
 /*
  * DPM Lab 3 - OdometryDisplay
  * 
@@ -30,7 +32,7 @@ public class OdometryDisplay extends Thread {
 			LCD.drawString("X:              ", 0, 0);
 			LCD.drawString("Y:              ", 0, 1);
 			LCD.drawString("T:              ", 0, 2);
-			LCD.drawString("deltaTheta: " + DriveToPoint.dT, 0, 4);
+			LCD.drawString("RemainingT: " + DriveToPoint.dT, 0, 4);
 			LCD.drawString("yCurrent: " + DriveToPoint.getyCurrent(), 0, 5);
 			LCD.drawString("thetaC: " + DriveToPoint.getThetaCurrent(), 0, 6);
 			
