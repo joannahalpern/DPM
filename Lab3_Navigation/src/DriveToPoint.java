@@ -4,7 +4,6 @@
  * Harris Miller 260499543
  * Joanna Halpern 260410826
  */
-package src;
 
 import lejos.nxt.Motor;
 import lejos.nxt.NXTRegulatedMotor;

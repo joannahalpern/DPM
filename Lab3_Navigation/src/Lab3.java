@@ -1,4 +1,3 @@
-package src;
 /*
  * DPM Lab 2 - Lab2.java
  * 
