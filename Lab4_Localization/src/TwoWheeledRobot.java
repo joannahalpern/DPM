@@ -1,9 +1,9 @@
 import lejos.nxt.NXTRegulatedMotor;
 
 public class TwoWheeledRobot {
-	public static final double DEFAULT_LEFT_RADIUS = 2.75;
-	public static final double DEFAULT_RIGHT_RADIUS = 2.75;
-	public static final double DEFAULT_WIDTH = 15.8;
+	public static final double DEFAULT_LEFT_RADIUS = 2.075;
+	public static final double DEFAULT_RIGHT_RADIUS = 2.075;
+	public static final double DEFAULT_WIDTH = 14.9;
 	private NXTRegulatedMotor leftMotor, rightMotor;
 	private double leftRadius, rightRadius, width;
 	private double forwardSpeed, rotationSpeed;
@@ -30,14 +30,11 @@ public class TwoWheeledRobot {
 	
 	// accessors
 	public double getDisplacement() {
-		return (leftMotor.getTachoCount() * leftRadius +
-				rightMotor.getTachoCount() * rightRadius) *
-				Math.PI / 360.0;
+		return (leftMotor.getTachoCount() * leftRadius + rightMotor.getTachoCount() * rightRadius) * Math.PI / (180.0*2);
 	}
 	
 	public double getHeading() {
-		return (leftMotor.getTachoCount() * leftRadius -
-				rightMotor.getTachoCount() * rightRadius) / width;
+		return (leftMotor.getTachoCount() * leftRadius - rightMotor.getTachoCount() * rightRadius) / width;
 	}
 	
 	public void getDisplacementAndHeading(double [] data) {
@@ -66,10 +63,8 @@ public class TwoWheeledRobot {
 		this.forwardSpeed = forwardSpeed;
 		this.rotationSpeed = rotationalSpeed; 
 
-		leftSpeed = (forwardSpeed + rotationalSpeed * width * Math.PI / 360.0) *
-				180.0 / (leftRadius * Math.PI);
-		rightSpeed = (forwardSpeed - rotationalSpeed * width * Math.PI / 360.0) *
-				180.0 / (rightRadius * Math.PI);
+		leftSpeed = (forwardSpeed + rotationalSpeed * width * Math.PI / 360.0) * 180.0 / (leftRadius * Math.PI);
+		rightSpeed = (forwardSpeed - rotationalSpeed * width * Math.PI / 360.0) * 180.0 / (rightRadius * Math.PI);
 
 		// set motor directions
 		if (leftSpeed > 0.0)

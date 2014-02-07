@@ -1,10 +1,11 @@
+package TA;
 import lejos.nxt.Motor;
 
 // Main Class
 public class DPM {
 	public static void main(String [] args) {
-		Odometer odo = new Odometer(Motor.A, Motor.B, 30, true);
-		Navigation nav = new Navigation(odo);
+		OdometerTA odo = new OdometerTA(Motor.A, Motor.B, 30, true);
+		NavigationTA nav = new NavigationTA(odo);
 		
 		// move in a square
 		nav.travelTo(0, 30);
