@@ -1,0 +1,34 @@
+
+public class TestLocalization {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+		double lol = calculateCurrentAngle(320, 144);
+		System.out.println(lol);
+	}
+	private static double calculateCurrentAngle(double angleA, double angleB) {
+		double theta;
+		angleA= backToRawAngles(angleA);
+		angleB= backToRawAngles(angleB);
+		
+		double centerAngle = (angleA+angleB)/2;
+		if(centerAngle>0){
+			theta = 45 - centerAngle;
+		}else{
+			theta = 225 - centerAngle;
+		}
+		
+		if (theta < 0.0){
+			theta = 360.0 + (theta % 360.0);
+		}
+		
+		return theta % 360.0;
+	}
+	private static double backToRawAngles(double inAngle){
+		if(inAngle>180){
+			return inAngle-360;
+		}
+		return inAngle;
+	}
+}

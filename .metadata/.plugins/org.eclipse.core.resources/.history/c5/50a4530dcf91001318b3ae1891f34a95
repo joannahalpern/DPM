@@ -1,0 +1,28 @@
+
+public class TestLocalization {
+
+	public static void main(String[] args) {
+
+		double lol = calculateChangeAngleToZero(305, 135);
+		System.out.println(lol);
+	}
+	private static double calculateChangeAngleToZero(double angleA, double angleB) {
+		angleA= backToRawAngles(angleA);
+		angleB= backToRawAngles(angleB);
+		
+		double centerAngle = (angleA+angleB)/2;
+		if(angleA<0){
+			return (135-(angleB-centerAngle));
+		}
+		else{
+			return (-45-(angleB-centerAngle));
+		}
+
+	}
+	private static double backToRawAngles(double inAngle){
+		if(inAngle>180){
+			return inAngle-360;
+		}
+		return inAngle;
+	}
+}

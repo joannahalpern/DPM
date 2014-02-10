@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename local variable &apos;theta&apos; in &apos;TestLocalization.calculateChangeAngle(...)&apos; to &apos;deltaTheta&apos;&#x0D;&#x0A;- Original project: &apos;Testing&apos;&#x0D;&#x0A;- Original element: &apos;TestLocalization.calculateChangeAngle(double, double).theta&apos;&#x0D;&#x0A;- Renamed element: &apos;theta&apos;&#x0D;&#x0A;- Update references to refactored element" description="Rename local variable &apos;theta&apos;" id="org.eclipse.jdt.ui.rename.local.variable" input="/src&lt;{TestLocalization.java[TestLocalization~calculateChangeAngle~D~D@theta!284!305!291!295!D!0!false" name="deltaTheta" references="true" stamp="1391978136015" version="1.0"/>
+</session>

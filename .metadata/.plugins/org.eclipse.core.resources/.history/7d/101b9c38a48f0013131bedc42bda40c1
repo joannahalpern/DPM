@@ -1,0 +1,18 @@
+
+public class TestLocalization {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+	private static double calculateCurrentAngle(Odometer odo, double angleA, double angleB) {
+		double deltaTheta;
+		if (angleA > angleB){
+			deltaTheta = 45 - (angleA + angleB)/2;
+		}
+		else{
+			deltaTheta = 225 - (angleA + angleB)/2;
+		}
+		return deltaTheta;
+	}
+}
