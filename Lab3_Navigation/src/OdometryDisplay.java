@@ -1,4 +1,3 @@
-package src;
 
 /*
  * DPM Lab 3 - OdometryDisplay

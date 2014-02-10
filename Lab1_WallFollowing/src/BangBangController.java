@@ -61,7 +61,6 @@ public class BangBangController implements UltrasonicController{
 
 	}
 	
-	@Override
 	public void processUSData(int distance) {
 		this.distance = distance;//measured distance
 		int tooClose = bandCenter - bandwidth;
@@ -112,7 +111,6 @@ public class BangBangController implements UltrasonicController{
 		return 0;
 	}
 
-	@Override
 	public int readUSDistance() {//used so we can print distance value
 		return this.distance;
 	}

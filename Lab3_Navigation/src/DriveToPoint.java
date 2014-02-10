@@ -1,5 +1,3 @@
-package src;
-
 import lejos.nxt.Motor;
 import lejos.nxt.NXTRegulatedMotor;
 
@@ -12,7 +10,7 @@ import lejos.nxt.NXTRegulatedMotor;
  */
 public class DriveToPoint extends Thread {
 	private Odometer odometer;
-	private static final int FWD_SPEED = 175;
+	private static final int FWD_SPEED = 250;
 	private static final double WIDTH = 14.9;
 	private static final double WHEEL_RADIUS = 2.075;
 	private static double xCurrent = 0;

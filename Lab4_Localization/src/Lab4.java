@@ -26,7 +26,7 @@ public class Lab4 {
 		ColorSensor ls = new ColorSensor(SensorPort.S1);
 		
 		// perform the ultrasonic localization
-		USLocalizer usl = new USLocalizer(odo, us, USLocalizer.LocalizationType.RISING_EDGE);
+		USLocalizer usl = new USLocalizer(odo, us, USLocalizer.LocalizationType.FALLING_EDGE);
 		UltrasonicPoller usPoller = new UltrasonicPoller(us, usl);
 		
 		// perform the light sensor localization
@@ -38,8 +38,9 @@ public class Lab4 {
 		switch(option) {
 		case Button.ID_LEFT:
 			try { Thread.sleep(1000); } catch(Exception e){}
-//			usPoller.start();
-			lsPoller.start();
+//			usl.doLocalization();
+			usPoller.start();
+//			lsPoller.start();
 			break;
 		case Button.ID_RIGHT:
 			try { Thread.sleep(1000); } catch(Exception e){}

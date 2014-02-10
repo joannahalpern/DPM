@@ -60,7 +60,6 @@ public class PController implements UltrasonicController{
 		leftMotor.setSpeed(motorStraight);
 		rightMotor.setSpeed(motorStraight);
 	}
-	@Override
 	public void processUSData(int distance) {
 		this.distance = distance;
 		
@@ -94,7 +93,6 @@ public class PController implements UltrasonicController{
 		return rightSpeed;
 	}
 
-	@Override
 	public int readUSDistance() {
 		return this.distance;
 	}
