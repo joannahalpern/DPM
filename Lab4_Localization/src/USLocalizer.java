@@ -1,8 +1,8 @@
 import lejos.nxt.Motor;
 import lejos.nxt.UltrasonicSensor;
-
+//TODO: add some kind of error-catcher for US readings
 public class USLocalizer {
-	public enum LocalizationType { FALLING_EDGE, RISING_EDGE, COMPROMISE };
+	public enum LocalizationType { FALLING_EDGE, RISING_EDGE};
 	public static int ROTATION_SPEED = 100;
 
 	private Odometer odo;
@@ -56,27 +56,41 @@ public class USLocalizer {
 			odo.getPosition(pos);
 			angleB1 = pos[2];
 			
-			double currentAngle = calculateCurrentAngle(angleA1, angleB1);
+			double currentAngle = fixDegAngle(-calculateChangeAngleToZero(angleA1, angleB1, locType));
 			
 			odo.setPosition(new double [] {0.0, 0.0, currentAngle}, new boolean [] {true, true, true});
 		} 
-		else if (locType == LocalizationType.RISING_EDGE){
-			/*
-			 * The robot should turn until it sees the wall, then look for the
-			 * "rising edges:" the points where it no longer sees the wall.
-			 * This is very similar to the FALLING_EDGE routine, but the robot
-			 * will face toward the wall for most of it.
-			 */
+		else{//RISING EDGE
+			setClockwise();
+			while (!isWallSeen()){
+				rotate();
+			}
+			while (isWallSeen()){
+				rotate();
+			}
+			Motor.A.stop(true);
+			Motor.B.stop(false);
 			
-			//
-			// FILL THIS IN
-			//
-		}
-		
-		else { //Compromise
+			odo.getPosition(pos);
+			angleA2 = pos[2];
 			
-		}
-	
+			setCounterClockwise();
+			while (!isWallSeen()){
+				rotate();
+			}
+			while (isWallSeen()){
+				rotate();
+			}
+			Motor.A.stop(true);
+			Motor.B.stop(false);
+			
+			odo.getPosition(pos);
+			angleB2 = pos[2];
+			
+			double currentAngle = fixDegAngle(-calculateChangeAngleToZero(angleA2, angleB2, locType));
+			
+			odo.setPosition(new double [] {0.0, 0.0, currentAngle}, new boolean [] {true, true, true});
+			}
 	}
 	
 	public boolean isWallSeen(){
@@ -114,15 +128,31 @@ public class USLocalizer {
 		Motor.B.setSpeed(ROTATION_SPEED);
 	}
 
-	private double calculateCurrentAngle(double angleA, double angleB) {
-		double deltaTheta;
-		if (angleA > angleB){
-			deltaTheta = 45 - (angleA + angleB)/2;
-		}
-		else{
-			deltaTheta = 225 - (angleA + angleB)/2;
+	private double calculateChangeAngleToZero(double angleA, double angleB, LocalizationType type) {//falling edge
+		double deltaTheta=999999;
+		angleA= backToRawAngles(angleA);
+		angleB= backToRawAngles(angleB);
+		
+		double centerAngle = (angleA+angleB)/2;
+		switch (type){
+			case FALLING_EDGE:
+				if(angleA<0){
+					deltaTheta = (135-(angleB-centerAngle));
+				}
+				else{
+					deltaTheta = (-45-(angleB-centerAngle));
+				}
+				break;
+			case RISING_EDGE:
+				if(angleA>0){
+					deltaTheta = (135-(angleB-centerAngle));
+				}
+				else{
+					deltaTheta = (-45-(angleB-centerAngle));
+				}
 		}
 		return deltaTheta;
+
 	}
 	
 	public static double getAngleA1() {
@@ -144,6 +174,13 @@ public class USLocalizer {
 	/**
 	 * for testing purposes
 	 */
+	private double backToRawAngles(double inAngle){
+		if(inAngle>180){
+			return inAngle-360;
+		}
+		return inAngle;
+	}
+	
 	public static void rotateNow(){
 		Motor.A.forward();
 		Motor.B.backward();
@@ -160,5 +197,11 @@ public class USLocalizer {
 	private void setCounterClockwise() {
 		Motor.A.backward();		
 		Motor.B.forward();
+	}
+	public static double fixDegAngle(double angle) {		
+		if (angle < 0.0)
+			angle = 360.0 + (angle % 360.0);
+		
+		return angle % 360.0;
 	}
 }

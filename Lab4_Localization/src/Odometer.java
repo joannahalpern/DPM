@@ -100,4 +100,17 @@ public class Odometer implements TimerListener {
 		else
 			return d - 360.0;
 	}
+
+	public double getX() {
+		return x;
+	}
+	
+	public double getY() {
+		return y;
+	}
+
+	public double getAng() {
+		// TODO Auto-generated method stub
+		return theta;
+	}
 }

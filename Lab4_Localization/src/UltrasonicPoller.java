@@ -18,10 +18,6 @@ public class UltrasonicPoller extends Thread{
 	
 	public void run() {
 		uSLocalizer.doLocalization();
-//		while (true) {
-//			//process collected data
-//			try { Thread.sleep(10); } catch(Exception e){}
-//		}
 	}
 
 }

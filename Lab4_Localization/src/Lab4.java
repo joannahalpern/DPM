@@ -1,5 +1,10 @@
 import lejos.nxt.*;
-
+/*
+ * TODO: THough process for light localization
+ * assuming robot starts along diagonal, robot will rotate to 135 (so it's facing back corner)
+ * the drive until light sensor senses line + about 8cm (note that distance from sensor to robot center is 11.6cm)
+ * then proceed as tutorial
+ */
 public class Lab4 {
 
 	public static void main(String[] args) {
@@ -18,18 +23,28 @@ public class Lab4 {
 		Odometer odo = new Odometer(patBot, true);
 		LCDInfo lcd = new LCDInfo(odo);
 		UltrasonicSensor us = new UltrasonicSensor(SensorPort.S2);
-//		LightSensor ls = new LightSensor(SensorPort.S1);
+		ColorSensor ls = new ColorSensor(SensorPort.S1);
+		
 		// perform the ultrasonic localization
-		USLocalizer usl = new USLocalizer(odo, us, USLocalizer.LocalizationType.FALLING_EDGE);
+		USLocalizer usl = new USLocalizer(odo, us, USLocalizer.LocalizationType.RISING_EDGE);
 		UltrasonicPoller usPoller = new UltrasonicPoller(us, usl);
+		
+		// perform the light sensor localization
+		Navigation nav = new Navigation(odo);
+		LightLocalizer lsl = new LightLocalizer(odo, ls, nav);
+		LightPoller lsPoller = new LightPoller( ls, lsl, nav);
 		
 		
 		switch(option) {
 		case Button.ID_LEFT:
-			usPoller.start();
+			try { Thread.sleep(1000); } catch(Exception e){}
+//			usPoller.start();
+			lsPoller.start();
 			break;
 		case Button.ID_RIGHT:
+			try { Thread.sleep(1000); } catch(Exception e){}
 			usPoller.start();
+			lsPoller.start();
 			break;
 		default:
 			System.out.println("Error - invalid button");
@@ -57,9 +72,7 @@ public class Lab4 {
 		
 //		usl.doLocalization(); //this will set the odometer to the correct theta
 		
-		// perform the light sensor localization
-//		LightLocalizer lsl = new LightLocalizer(odo, ls);
-//		lsl.doLocalization();			
+			
 //		
 //		Button.waitForAnyPress();
 //		System.exit(0);
