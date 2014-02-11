@@ -2,7 +2,7 @@ import lejos.nxt.*;
 
 /**
   * A simple concurrency test using buttons and the NXT display @author ff
-  * Example from class 
+  * Example from class
   */
 public class CT2 extends Thread {
 
