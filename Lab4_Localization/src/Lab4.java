@@ -60,12 +60,12 @@ public class Lab4 {
 		case Button.ID_LEFT:
 			try { Thread.sleep(1000); } catch(Exception e){}
 			usPollerFallingEdge.start();
-//			lsPoller.start();
+			lsPoller.start();
 			break;
 		case Button.ID_RIGHT:
 			try { Thread.sleep(1000); } catch(Exception e){}
 			usPollerRisingEdge.start();
-//			lsPoller.start();
+			lsPoller.start();
 			break;
 		default:
 			System.out.println("Error - invalid button");

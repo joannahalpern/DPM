@@ -10,7 +10,7 @@ public class LightLocalizer {
 	private boolean lineSeen = false;
 	private int lightVal = 99999;
 	private static final int LIGHT_THRESHOLD = 350;
-	public static final double DIST_BTW_LS_AXLE = 11.8; //cm
+	public static final double DIST_BTW_LS_AXLE = 12; //cm
 	private static double[] angles = new double[4];
 	private double[] position = new double[4];
 	
@@ -55,6 +55,9 @@ public class LightLocalizer {
 				}
 			}
 			angles[line] = marshmallow.getAng();
+			if (line == 2){
+				odo.setAngle( -(360-(angles[1]+angles[2])/2) );
+			}
 			marshmallow.setAngle(0);
 			try{Thread.sleep(1000);}catch (InterruptedException e) {}
 		}
@@ -71,6 +74,7 @@ public class LightLocalizer {
 		double thetaY = (360- (angles[2]+angles[3]) )*Math.PI/180;
 		double x = -DIST_BTW_LS_AXLE* Math.cos(thetaX/2);
 		double y = -DIST_BTW_LS_AXLE* Math.cos(thetaY/2);
+		
 		double[] pos = {x,y,99999};
 		boolean[] update = {true,true,false};
 		
