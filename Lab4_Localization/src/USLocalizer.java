@@ -1,3 +1,9 @@
+/*
+ * ECSE 211 Lab 4 - Group 53
+ * Harris Miller - 260499543
+ * Joanna Halpern - 260410826
+ */
+
 import lejos.nxt.Motor;
 import lejos.nxt.UltrasonicSensor;
 //TODO: add some kind of error-catcher for US readings
@@ -9,7 +15,8 @@ public class USLocalizer {
 	private TwoWheeledRobot robot;
 	private UltrasonicSensor us;
 	private LocalizationType locType;
-	private static double distance = 9999;
+	private static double distance = 9999; //this is distance to the wall as seen by ultra sonic sensor
+										   //this value will change as soon as the sensor starts polling
 	private static double angleA, angleB;
 	
 	public USLocalizer(Odometer odo, UltrasonicSensor us, LocalizationType locType, Navigation nav) {
@@ -23,7 +30,11 @@ public class USLocalizer {
 		// switch off the ultrasonic sensor
 //		us.off();
 	}
-	
+	/**
+	 * The Robot will determine it's current angle by detecting walls with the ultra sonic sensor
+	 * and recording the angles that the odometer reads when it sees a wall. It then uses those
+	 * recorded angles to calculate it's current angle.
+	 */
 	public void doLocalization() {
 		
 		double [] pos = new double [3];
@@ -90,7 +101,7 @@ public class USLocalizer {
 			angleA = pos[2];
 			
 			
-			//
+			//Robot turns counterclockwise until it sees a wall again
 			nav.setCounterClockwise();
 			while (!isWallSeen()){
 				Navigation.go(Navigation.ROTATION_SPEED);
@@ -99,6 +110,8 @@ public class USLocalizer {
 					try { Thread.sleep(500); } catch(Exception e){}
 				}
 			}
+			//Robot turns counter clockwise until it doesn't see a wall again
+			//It then latches that angle
 			while (isWallSeen()){
 				Navigation.go(Navigation.ROTATION_SPEED);
 			}
@@ -106,14 +119,20 @@ public class USLocalizer {
 			angleB = pos[2];
 
 			Motor.A.stop(true);
+			Motor.B.stop(true);
 			
+			//Using the 2 latched angles, it calculates what it's current angle must be and puts that between 0 and 360 degrees
 			double currentAngle = fixDegAngle(-calculateChangeAngleToZero(angleA, angleB, locType));
 			
 			odo.setPosition(new double [] {0.0, 0.0, currentAngle}, new boolean [] {true, true, true});
 			}
-		return; //TODO: check return
+		return;
 	}
 	
+	/**
+	 * If a wall is within threshold of 32cm, it returns true. 
+	 * Else returns false
+	 */
 	public boolean isWallSeen(){
 		distance = getFilteredData();
 
@@ -127,6 +146,10 @@ public class USLocalizer {
 		return distance;
 	}
 
+	/**
+	 * Returns distance seen by ultra sonic sensor.
+	 * If the read distance is greater than 50, it will just return 50
+	 */
 	private int getFilteredData() {
 		int distance = us.getDistance();
 
@@ -136,27 +159,30 @@ public class USLocalizer {
 		return distance;
 	}
 
-	private double calculateChangeAngleToZero(double angleA, double angleB, LocalizationType type) {//falling edge
-		double deltaTheta=999999;
-		angleA= backToRawAngles(angleA);
+	/**
+	 * Calculates robot's current angle based on the two latched angles
+	 */
+	private double calculateChangeAngleToZero(double angleA, double angleB, LocalizationType type) {
+		double deltaTheta=999999; //this value will be changed in the cases
+		angleA= backToRawAngles(angleA); //puts angle between -180 and 180 (to simplify calculations)
 		angleB= backToRawAngles(angleB);
 		
-		double centerAngle = (angleA+angleB)/2;
+		double middleAngle = (angleA+angleB)/2;
 		switch (type){
 			case FALLING_EDGE:
-				if(angleA<0){
-					deltaTheta = (135-(angleB-centerAngle));
+				if(angleA<0){ //This is Falling Edge where the robot started facing away from wall
+					deltaTheta = (135-(angleB-middleAngle)); //formula calculated using trigonometry
 				}
-				else{
-					deltaTheta = (-45-(angleB-centerAngle));
+				else{//Falling Edge where the robot started facing the wall
+					deltaTheta = (-45-(angleB-middleAngle));
 				}
 				break;
 			case RISING_EDGE:
-				if(angleA>0){
-					deltaTheta = (135-(angleB-centerAngle));
+				if(angleA>0){ //This is Rising Edge where the robot started facing away from wall
+					deltaTheta = (135-(angleB-middleAngle));
 				}
-				else{
-					deltaTheta = (-45-(angleB-centerAngle));
+				else{//Rising edge where the robot started facing away from wall
+					deltaTheta = (-45-(angleB-middleAngle));
 				}
 		}
 		return deltaTheta;
@@ -178,18 +204,27 @@ public class USLocalizer {
 	public static double getAngleB2() {
 		return angleB;
 	}
-
+	/**
+	 * Converts angle
+	 * @param inAngle between 0 and 360
+	 * @returns equivalent angle between -180 and 180
+	 */
 	private double backToRawAngles(double inAngle){
 		if(inAngle>180){
 			return inAngle-360;
 		}
 		return inAngle;
 	}
-	
+	/**
+	 * Converts angle
+	 * @param any angle
+	 * @returns equivalent angle between 0 and 360
+	 */
 	public static double fixDegAngle(double angle) {		
-		if (angle < 0.0)
-			angle = 360.0 + (angle % 360.0);
-		
-		return angle % 360.0;
+		while (angle < 0.0){
+			angle += 360;
+		}
+		angle = angle % 360.0;
+		return angle;
 	}
 }
