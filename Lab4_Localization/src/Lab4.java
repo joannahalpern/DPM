@@ -1,10 +1,11 @@
-import lejos.nxt.*;
 /*
- * TODO: Thought process for light localization:
- * assuming robot starts along diagonal, robot will rotate to 135 (so it's facing back corner)
- * the drive until light sensor senses line + about 8cm (note that distance from sensor to robot center is 11.6cm)
- * then proceed as tutorial
+ * Lab4- Group 53 - Lab4
+ * Harris Miller - 260499543
+ * Joanna Halpern - 260410826
  */
+
+import lejos.nxt.*;
+
 public class Lab4 {
 	public static int myMutex = 0; //global variable
 	

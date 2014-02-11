@@ -1,5 +1,9 @@
-import TA.OdometerTA;
-import lejos.nxt.LCD;
+/*
+ * Lab4- Group 53 - Navigation
+ * Harris Miller - 260499543
+ * Joanna Halpern - 260410826
+ */
+
 import lejos.nxt.Motor;
 import lejos.nxt.NXTRegulatedMotor;
 

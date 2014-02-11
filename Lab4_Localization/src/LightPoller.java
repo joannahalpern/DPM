@@ -1,5 +1,5 @@
 /*
- * ECSE 211 Lab 1 - Group 53
+ * Lab4- Group 53 - LightPoller
  * Harris Miller - 260499543
  * Joanna Halpern - 260410826
  */

@@ -1,0 +1,63 @@
+import lejos.nxt.ColorSensor;
+import lejos.nxt.SensorPort;
+
+public class LightLocalizer {
+	private Odometer odo;
+	private TwoWheeledRobot robot;
+	private ColorSensor ls;
+	private Navigation nav;
+	private boolean lineSeen = false;
+	private int lightVal = 99999;
+	private static final int LIGHT_THRESHOLD = 350;
+	
+	public LightLocalizer(Odometer odo, ColorSensor ls, Navigation nav) {
+		this.odo = odo;
+		this.robot = odo.getTwoWheeledRobot();
+		this.ls = ls;
+		this.nav = nav;
+		
+		// turn on the light
+		ls.setFloodlight(true);
+	}
+	
+	public void doLocalization() {
+		// drive to location listed in tutorial
+		// start rotating and clock all 4 gridlines
+		// do trig to compute (0,0) and 0 degrees
+		// when done travel to (0,0) and turn to 0 degrees
+		nav.turnTo(225);
+		
+//		nav.travelTo(5,5);
+//		nav.travelTo(0,5);
+//		nav.travelTo(0,0);
+
+		
+/*
+ * TODO: Thought process for light localization:
+ * assuming robot starts along diagonal, robot will rotate to 135 (so it's facing back corner)
+ * the drive until light sensor senses line + about 8cm (note that distance from sensor to robot center is 11.6cm)
+ * then proceed as tutorial
+ */		
+		initializeLightSensor();
+		nav.turnTo(225);
+		while (!lineSeen){
+			lightVal = ls.getRawLightValue();
+			if (lightVal < LIGHT_THRESHOLD) {
+				lineSeen = true;
+			}
+//			nav.moveBackwards();
+		}
+		nav.moveBy(-8);
+		for(int line = 0; line<4; line++){
+			nav.rotateClockWise;
+		}
+		
+		
+	}
+
+	private void initializeLightSensor() {
+		ls.setFloodlight(true);
+		ls.setFloodlight(ColorSensor.Color.GREEN);		
+	}
+
+}

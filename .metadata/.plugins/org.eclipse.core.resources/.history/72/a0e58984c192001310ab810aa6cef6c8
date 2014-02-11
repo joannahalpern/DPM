@@ -1,0 +1,202 @@
+import lejos.nxt.Motor;
+import lejos.nxt.UltrasonicSensor;
+//TODO: add some kind of error-catcher for US readings
+public class USLocalizer {
+	public enum LocalizationType { FALLING_EDGE, RISING_EDGE};
+	public static int ROTATION_SPEED = 100;
+
+	private Navigation nav;
+	private Odometer odo;
+	private TwoWheeledRobot robot;
+	private UltrasonicSensor us;
+	private LocalizationType locType;
+	private static double distance = 9999;
+	private static double angleA1, angleA2, angleB1, angleB2;
+	
+	public USLocalizer(Odometer odo, UltrasonicSensor us, LocalizationType locType) {
+		this.nav = nav;
+		this.odo = odo;
+		this.robot = odo.getTwoWheeledRobot();
+		this.us = us;
+		this.locType = locType;
+		
+		
+		// switch off the ultrasonic sensor
+//		us.off();
+	}
+	
+	public void doLocalization() {
+		
+		double [] pos = new double [3];
+//		double angleA1, angleA2, angleB1, angleB2;
+		
+		if (locType == LocalizationType.FALLING_EDGE) {
+			
+			nav.setClockwise();
+			while (isWallSeen()){
+				rotate();
+			}
+			while (!isWallSeen()){
+				rotate();
+			}
+			Motor.A.stop(true);
+			Motor.B.stop(false);
+			
+			odo.getPosition(pos);
+			angleA1 = pos[2];
+			
+			setCounterClockwise();
+			while (isWallSeen()){
+				rotate();
+			}
+			while (!isWallSeen()){
+				rotate();
+			}
+			Motor.A.stop(true);
+			Motor.B.stop(false);
+			
+			odo.getPosition(pos);
+			angleB1 = pos[2];
+			
+			double currentAngle = fixDegAngle(-calculateChangeAngleToZero(angleA1, angleB1, locType));
+			
+			odo.setPosition(new double [] {0.0, 0.0, currentAngle}, new boolean [] {true, true, true});
+		} 
+		else{//RISING EDGE
+			setClockwise();
+			while (!isWallSeen()){
+				rotate();
+			}
+			while (isWallSeen()){
+				rotate();
+			}
+			Motor.A.stop(true);
+			Motor.B.stop(false);
+			
+			odo.getPosition(pos);
+			angleA2 = pos[2];
+			
+			setCounterClockwise();
+			while (!isWallSeen()){
+				rotate();
+			}
+			while (isWallSeen()){
+				rotate();
+			}
+			Motor.A.stop(true);
+			Motor.B.stop(false);
+			
+			odo.getPosition(pos);
+			angleB2 = pos[2];
+			
+			double currentAngle = fixDegAngle(-calculateChangeAngleToZero(angleA2, angleB2, locType));
+			
+			odo.setPosition(new double [] {0.0, 0.0, currentAngle}, new boolean [] {true, true, true});
+			}
+		return; //TODO: check return
+	}
+	
+	public boolean isWallSeen(){
+		distance = us.getDistance();
+
+		if (distance < 32){
+			return true;
+		}
+		return false;
+	}
+	
+	public static double getDistance() {
+		return distance;
+	}
+
+	private int getFilteredData() {
+		int distance;
+		
+		// do a ping
+		us.ping();
+		
+		// wait for the ping to complete
+		try { Thread.sleep(50); } catch (InterruptedException e) {}
+		
+		// there will be a delay here
+		distance = us.getDistance();
+		if (distance > 50){
+			distance = 50;
+		}
+		return distance;
+	}
+
+	private void rotate() {
+		Motor.A.setSpeed(ROTATION_SPEED);
+		Motor.B.setSpeed(ROTATION_SPEED);
+	}
+
+	private double calculateChangeAngleToZero(double angleA, double angleB, LocalizationType type) {//falling edge
+		double deltaTheta=999999;
+		angleA= backToRawAngles(angleA);
+		angleB= backToRawAngles(angleB);
+		
+		double centerAngle = (angleA+angleB)/2;
+		switch (type){
+			case FALLING_EDGE:
+				if(angleA<0){
+					deltaTheta = (135-(angleB-centerAngle));
+				}
+				else{
+					deltaTheta = (-45-(angleB-centerAngle));
+				}
+				break;
+			case RISING_EDGE:
+				if(angleA>0){
+					deltaTheta = (135-(angleB-centerAngle));
+				}
+				else{
+					deltaTheta = (-45-(angleB-centerAngle));
+				}
+		}
+		return deltaTheta;
+
+	}
+	
+	public static double getAngleA1() {
+		return angleA1;
+	}
+
+	public static double getAngleA2() {
+		return angleA2;
+	}
+
+	public static double getAngleB1() {
+		return angleB1;
+	}
+
+	public static double getAngleB2() {
+		return angleB2;
+	}
+
+	/**
+	 * for testing purposes
+	 */
+	private double backToRawAngles(double inAngle){
+		if(inAngle>180){
+			return inAngle-360;
+		}
+		return inAngle;
+	}
+	
+	public static void rotateNow(){
+		Motor.A.forward();
+		Motor.B.backward();
+		while (true){
+			Motor.A.setSpeed(ROTATION_SPEED);
+			Motor.B.setSpeed(-ROTATION_SPEED);
+		}
+	}
+
+	public static double fixDegAngle(double angle) {		
+		if (angle < 0.0)
+			angle = 360.0 + (angle % 360.0);
+		
+		return angle % 360.0;
+	}
+}

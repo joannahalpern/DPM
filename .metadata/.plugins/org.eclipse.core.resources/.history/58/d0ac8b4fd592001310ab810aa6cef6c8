@@ -1,0 +1,88 @@
+import lejos.nxt.ColorSensor;
+import lejos.nxt.SensorPort;
+
+public class LightLocalizer {
+	private Odometer odo;
+	private Odometer marshmallow;
+	private TwoWheeledRobot robot;
+	private ColorSensor ls;
+	private Navigation nav;
+	private boolean lineSeen = false;
+	private int lightVal = 99999;
+	private static final int LIGHT_THRESHOLD = 350;
+	public static final double DIST_BTW_LS_AXLE = 11.8; //cm
+	private static double[] angles = new double[4];
+	private double[] position = new double[4];
+	
+	public LightLocalizer(Odometer odo,Odometer marshmallow, ColorSensor ls, Navigation nav) {
+		this.odo = odo;
+		this.marshmallow = marshmallow;
+		this.robot = odo.getTwoWheeledRobot();
+		this.ls = ls;
+		this.nav = nav;
+		
+		// turn on the light
+		ls.setFloodlight(true);
+	}
+	
+	public void doLocalization() {
+/*
+ * TODO: Thought process for light localization:
+ * assuming robot starts along diagonal, robot will rotate to 135 (so it's facing back corner)
+ * the drive until light sensor senses line + about 8cm (note that distance from sensor to robot center is 11.6cm)
+ * then proceed as tutorial
+ */		
+		initializeLightSensor();
+		nav.turnTo(225);
+		nav.setBackward();
+		while (!lineSeen){
+			lightVal = ls.getRawLightValue();
+			if (lightVal < LIGHT_THRESHOLD) {
+				lineSeen = true;
+			}
+			Navigation.go(Navigation.FWD_SPEED);
+		}
+		nav.moveBy(-6);
+		nav.setClockwise();
+		marshmallow.setAngle(0);
+		Navigation.go(Navigation.ROTATION_SPEED);
+		for(int line = 0; line<4; line++){
+			lineSeen = false;
+			while (!lineSeen){
+				lightVal = ls.getRawLightValue();
+				if (lightVal < LIGHT_THRESHOLD) {
+					lineSeen = true;
+				}
+			}
+			angles[line] = marshmallow.getAng();
+			marshmallow.setAngle(0);
+			try{Thread.sleep(1000);}catch (InterruptedException e) {}
+		}
+		nav.go(0);
+//		calculateCurrentPosition();
+		return;
+		
+	}
+
+	private void calculateCurrentPosition(){
+		double thetaX = (360- (angles[1]+angles[2]) );
+		double thetaY = (360- (angles[2]+angles[3]) );
+		double x = -DIST_BTW_LS_AXLE* Math.cos(thetaX/2);
+		double y = -DIST_BTW_LS_AXLE* Math.cos(thetaY/2);
+		double[] pos = {x,y,99999};
+		boolean[] update = {true,true,false};
+		
+		synchronized(Lab4.lock){
+			odo.setPosition(pos, update);
+		}
+		
+	}
+	
+	private void initializeLightSensor() {
+		ls.setFloodlight(true);
+		ls.setFloodlight(ColorSensor.Color.GREEN);		
+	}
+	public static double getAngle(int i){
+		return angles[i];
+	}
+}
