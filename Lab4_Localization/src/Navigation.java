@@ -1,5 +1,9 @@
-import TA.OdometerTA;
-import lejos.nxt.LCD;
+/*
+ * Lab4- Group 53 - Navigation
+ * Harris Miller - 260499543
+ * Joanna Halpern - 260410826
+ */
+
 import lejos.nxt.Motor;
 import lejos.nxt.NXTRegulatedMotor;
 
@@ -23,7 +27,7 @@ public class Navigation{
 	private final static NXTRegulatedMotor leftMotor = Motor.A;
 	private final static NXTRegulatedMotor rightMotor = Motor.B;
 
-	public Navigation(Odometer odometer) {
+	public Navigation(Odometer odometer) {//initialize the navigator with stopped motors with low acceleration
 		this.odometer = odometer;
 		for (NXTRegulatedMotor motor : new NXTRegulatedMotor[] { leftMotor,
 				rightMotor }) {
@@ -67,7 +71,7 @@ public class Navigation{
 			 */
 	}
 	
-	public void moveBy(double distance){//TODO: check if negative numbers make wheels go backwards
+	public void moveBy(double distance){//as opposed to moveTo. This method takes negatives
 		leftMotor.rotate(convertDistance(WHEEL_RADIUS, distance), true);
 		rightMotor.rotate(convertDistance(WHEEL_RADIUS, distance), false);
 	}
@@ -87,11 +91,7 @@ public class Navigation{
 		rightMotor.rotate(-turningAngle, false); // turnTo minimal angle
 	}
 	
-	/**
-	 * 
-	 * @param speed
-	 */
-	public static void go(int speed) {
+	public static void go(int speed) { //this is used to turn the motors on, indefinitely 
 		Motor.A.setSpeed(speed);
 		Motor.B.setSpeed(speed);
 	}
@@ -109,7 +109,7 @@ public class Navigation{
 		return dTheta;
 	}
 
-	public static boolean isNavigating() {
+	public static boolean isNavigating() { //UNUSED
 		return false;
 	}
 
@@ -129,21 +129,21 @@ public class Navigation{
 		return thetaCurrent;
 	}
 	
-	public void setBackward(){
+	public void setBackward(){//set motors to run backward
 		Motor.A.backward();
 		Motor.B.backward();
 	}
 	
-	public void setForward(){
+	public void setForward(){//set motors to run forward
 		Motor.A.forward();
 		Motor.B.forward();
 	}
 	
-	public void setClockwise() {
+	public void setClockwise() {//set motors to run clockwise
 		Motor.A.forward();
 		Motor.B.backward();		
 	}
-	public void setCounterClockwise() {
+	public void setCounterClockwise() {//set motors to run counterclockwise
 		Motor.A.backward();		
 		Motor.B.forward();
 	}

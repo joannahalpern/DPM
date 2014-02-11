@@ -107,7 +107,7 @@ public class USLocalizer {
 				Navigation.go(Navigation.ROTATION_SPEED);
 				if (isWallSeen()){ //if a wall is seen, it waits before checking again so that it doesn't skip the
 								   //next part and latch an angle too soon
-					try { Thread.sleep(500); } catch(Exception e){}
+					try { Thread.sleep(250); } catch(Exception e){}
 				}
 			}
 			//Robot turns counter clockwise until it doesn't see a wall again

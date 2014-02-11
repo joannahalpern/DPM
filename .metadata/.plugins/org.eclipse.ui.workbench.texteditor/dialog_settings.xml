@@ -13,8 +13,11 @@
 		<item value="false" key="isRegEx"/>
 		<item value="false" key="incremental"/>
 		<item value="false" key="wholeword"/>
-		<item value="true" key="selection"/>
+		<item value="setPosition" key="selection"/>
 		<list key="findhistory">
+			<item value="try"/>
+			<item value="sleep"/>
+			<item value="lock"/>
 			<item value="true"/>
 			<item value="rotate"/>
 			<item value="Odometer"/>

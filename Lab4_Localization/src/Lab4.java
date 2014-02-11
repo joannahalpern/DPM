@@ -1,26 +1,23 @@
-import lejos.nxt.*;
 /*
- * TODO: Thought process for light localization:
- * assuming robot starts along diagonal, robot will rotate to 135 (so it's facing back corner)
- * the drive until light sensor senses line + about 8cm (note that distance from sensor to robot center is 11.6cm)
- * then proceed as tutorial
+ * Lab4- Group 53 - Lab4
+ * Harris Miller - 260499543
+ * Joanna Halpern - 260410826
  */
+
+import lejos.nxt.*;
+
 public class Lab4 {
 	public static int myMutex = 0; //global variable
 	
 	/* Create an object that can be used for synchronization across threads. */
 
-	static class theLock extends Object {
+	static class theLock extends Object {//this is a lock
 	}
 
 	static public theLock lock = new theLock();
 	
 	public static void main(String[] args) {
-		/*
-		 * Wait for startup button press
-		 * Button.ID_LEFT = BangBang Type
-		 * Button.ID_RIGHT = P Type
-		 */
+
 		LCD.clear();
 
 		// ask the user whether the motors should drive in a square or float
@@ -77,27 +74,3 @@ public class Lab4 {
 		System.exit(0);
 	}
 }
-		/**
-		 * our stuff
-		 */
-		// setup the odometer, display, and ultrasonic and light sensors
-//		TwoWheeledRobot patBot = new TwoWheeledRobot(Motor.A, Motor.B);
-//		Odometer odo = new Odometer(patBot, true);
-//		LCDInfo lcd = new LCDInfo(odo);
-//		UltrasonicSensor us = new UltrasonicSensor(SensorPort.S2);
-////		LightSensor ls = new LightSensor(SensorPort.S1);
-//		// perform the ultrasonic localization
-//		USLocalizer usl = new USLocalizer(odo, us, USLocalizer.LocalizationType.FALLING_EDGE);
-//		UltrasonicPoller usPoller = new UltrasonicPoller(us, usl);
-//		usPoller.start();
-		
-//		usl.doLocalization(); //this will set the odometer to the correct theta
-		
-			
-//		
-//		Button.waitForAnyPress();
-//		System.exit(0);
-//		
-//	}
-//
-//}

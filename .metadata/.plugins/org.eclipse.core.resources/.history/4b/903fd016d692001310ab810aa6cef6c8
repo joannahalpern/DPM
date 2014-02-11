@@ -1,0 +1,17 @@
+
+
+	
+public class TestCalculatePosition {
+	private static double[] angles = {0, 88.3, 138.4, 95.3};
+	public static final double DIST_BTW_LS_AXLE = 11.8; //cm
+
+	
+	
+	
+	private void calculateCurrentPosition(){
+		double thetaX = (360- (angles[1]+angles[2]) );
+		double thetaY = (360- (angles[2]+angles[3]) );
+		double x = -DIST_BTW_LS_AXLE* Math.cos(thetaX/2);
+		double y = -DIST_BTW_LS_AXLE* Math.cos(thetaY/2);
+	}
+}

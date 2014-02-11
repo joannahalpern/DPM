@@ -1,3 +1,9 @@
+/*
+ * Lab4- Group 53 - Odometer
+ * Harris Miller - 260499543
+ * Joanna Halpern - 260410826
+ */
+
 import lejos.util.Timer;
 import lejos.util.TimerListener;
 

@@ -1,5 +1,6 @@
 /*
- * ECSE 211 Lab 4 - Group 53
+
+ * Lab4- Group 53 - UltrasonicPoller
  * Harris Miller - 260499543
  * Joanna Halpern - 260410826
  */

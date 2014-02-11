@@ -1,5 +1,5 @@
 /*
- * ECSE 211 Lab 1 - Group 53
+ * Lab4- Group 53 - LightPoller
  * Harris Miller - 260499543
  * Joanna Halpern - 260410826
  */
@@ -19,10 +19,10 @@ public class LightPoller extends Thread{
 	}
 	
 	public void run() {
-		while(true){
+		while(true){//sleep every half second until myMutex (permission variable) goes to 1
 			if (Lab4.myMutex == 1){
 				lsLocalizer.doLocalization();
-				Lab4.myMutex=0;
+				Lab4.myMutex=0; //this way it only runs once
 			}
 			else{
 				try { Thread.sleep(500); } catch(Exception e){}
