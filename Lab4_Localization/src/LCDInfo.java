@@ -31,10 +31,11 @@ public class LCDInfo implements TimerListener{
 		LCD.drawInt((int)(pos[1] * 10), 3, 1);
 		LCD.drawInt((int)pos[2], 3, 2);
 		
-		LCD.drawString("USsensor= " + USLocalizer.getDistance(), 0, 4);
+		LCD.drawString("USsensor= " + USLocalizer.getDistance(), 0, 3);
 		
-		LCD.drawString("Angle A= " + USLocalizer.getAngleA1(), 0, 6);
-		LCD.drawString("Angle B= " + USLocalizer.getAngleB1(), 0, 7);
+		for (int i = 1; i<4; i++){
+			LCD.drawString("Line " + i + "= " +LightLocalizer.getAngle(i), 0, i+4);
+		}
 		
 	}
 }

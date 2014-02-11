@@ -18,6 +18,7 @@ public class UltrasonicPoller extends Thread{
 	
 	public void run() {
 		uSLocalizer.doLocalization();
+		Lab4.myMutex = 1;
 	}
 
 }

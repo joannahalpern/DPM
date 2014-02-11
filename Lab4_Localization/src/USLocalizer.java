@@ -3,8 +3,8 @@ import lejos.nxt.UltrasonicSensor;
 //TODO: add some kind of error-catcher for US readings
 public class USLocalizer {
 	public enum LocalizationType { FALLING_EDGE, RISING_EDGE};
-	public static int ROTATION_SPEED = 100;
 
+	private Navigation nav;
 	private Odometer odo;
 	private TwoWheeledRobot robot;
 	private UltrasonicSensor us;
@@ -12,7 +12,8 @@ public class USLocalizer {
 	private static double distance = 9999;
 	private static double angleA1, angleA2, angleB1, angleB2;
 	
-	public USLocalizer(Odometer odo, UltrasonicSensor us, LocalizationType locType) {
+	public USLocalizer(Odometer odo, UltrasonicSensor us, LocalizationType locType, Navigation nav) {
+		this.nav = nav;
 		this.odo = odo;
 		this.robot = odo.getTwoWheeledRobot();
 		this.us = us;
@@ -30,12 +31,12 @@ public class USLocalizer {
 		
 		if (locType == LocalizationType.FALLING_EDGE) {
 			
-			setClockwise();
+			nav.setClockwise();
 			while (isWallSeen()){
-				rotate();
+				Navigation.go(Navigation.ROTATION_SPEED);
 			}
 			while (!isWallSeen()){
-				rotate();
+				Navigation.go(Navigation.ROTATION_SPEED);
 			}
 			Motor.A.stop(true);
 			Motor.B.stop(false);
@@ -43,12 +44,12 @@ public class USLocalizer {
 			odo.getPosition(pos);
 			angleA1 = pos[2];
 			
-			setCounterClockwise();
+			nav.setCounterClockwise();
 			while (isWallSeen()){
-				rotate();
+				Navigation.go(Navigation.ROTATION_SPEED);
 			}
 			while (!isWallSeen()){
-				rotate();
+				Navigation.go(Navigation.ROTATION_SPEED);
 			}
 			Motor.A.stop(true);
 			Motor.B.stop(false);
@@ -61,12 +62,12 @@ public class USLocalizer {
 			odo.setPosition(new double [] {0.0, 0.0, currentAngle}, new boolean [] {true, true, true});
 		} 
 		else{//RISING EDGE
-			setClockwise();
+			nav.setClockwise();
 			while (!isWallSeen()){
-				rotate();
+				Navigation.go(Navigation.ROTATION_SPEED);
 			}
 			while (isWallSeen()){
-				rotate();
+				Navigation.go(Navigation.ROTATION_SPEED);
 			}
 			Motor.A.stop(true);
 			Motor.B.stop(false);
@@ -74,12 +75,12 @@ public class USLocalizer {
 			odo.getPosition(pos);
 			angleA2 = pos[2];
 			
-			setCounterClockwise();
+			nav.setCounterClockwise();
 			while (!isWallSeen()){
-				rotate();
+				Navigation.go(Navigation.ROTATION_SPEED);
 			}
 			while (isWallSeen()){
-				rotate();
+				Navigation.go(Navigation.ROTATION_SPEED);
 			}
 			Motor.A.stop(true);
 			Motor.B.stop(false);
@@ -91,10 +92,11 @@ public class USLocalizer {
 			
 			odo.setPosition(new double [] {0.0, 0.0, currentAngle}, new boolean [] {true, true, true});
 			}
+		return; //TODO: check return
 	}
 	
 	public boolean isWallSeen(){
-		distance = us.getDistance();
+		distance = getFilteredData();
 
 		if (distance < 32){
 			return true;
@@ -107,25 +109,12 @@ public class USLocalizer {
 	}
 
 	private int getFilteredData() {
-		int distance;
-		
-		// do a ping
-		us.ping();
-		
-		// wait for the ping to complete
-		try { Thread.sleep(50); } catch (InterruptedException e) {}
-		
-		// there will be a delay here
-		distance = us.getDistance();
+		int distance = us.getDistance();
+
 		if (distance > 50){
 			distance = 50;
 		}
 		return distance;
-	}
-
-	private void rotate() {
-		Motor.A.setSpeed(ROTATION_SPEED);
-		Motor.B.setSpeed(ROTATION_SPEED);
 	}
 
 	private double calculateChangeAngleToZero(double angleA, double angleB, LocalizationType type) {//falling edge
@@ -171,9 +160,6 @@ public class USLocalizer {
 		return angleB2;
 	}
 
-	/**
-	 * for testing purposes
-	 */
 	private double backToRawAngles(double inAngle){
 		if(inAngle>180){
 			return inAngle-360;
@@ -181,23 +167,6 @@ public class USLocalizer {
 		return inAngle;
 	}
 	
-	public static void rotateNow(){
-		Motor.A.forward();
-		Motor.B.backward();
-		while (true){
-			Motor.A.setSpeed(ROTATION_SPEED);
-			Motor.B.setSpeed(-ROTATION_SPEED);
-		}
-	}
-
-	private void setClockwise() {
-		Motor.A.forward();
-		Motor.B.backward();		
-	}
-	private void setCounterClockwise() {
-		Motor.A.backward();		
-		Motor.B.forward();
-	}
 	public static double fixDegAngle(double angle) {		
 		if (angle < 0.0)
 			angle = 360.0 + (angle % 360.0);

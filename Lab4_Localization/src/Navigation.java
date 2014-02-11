@@ -11,23 +11,24 @@ import lejos.nxt.NXTRegulatedMotor;
  * 
  */
 public class Navigation{
+	public static final int FWD_SPEED = 250;
+	public static final double WIDTH = 14.9;
+	public static final double WHEEL_RADIUS = 2.075;
+	public static final int ROTATION_SPEED = 75;
+	public static double dT = 0;
 	private Odometer odometer;
-	private static final int FWD_SPEED = 250;
-	private static final double WIDTH = 14.9;
-	private static final double WHEEL_RADIUS = 2.075;
 	private static double xCurrent = 0;
 	private static double yCurrent = 0;
 	private static double thetaCurrent;
 	private final static NXTRegulatedMotor leftMotor = Motor.A;
 	private final static NXTRegulatedMotor rightMotor = Motor.B;
-	public static double dT = 0;
 
 	public Navigation(Odometer odometer) {
 		this.odometer = odometer;
 		for (NXTRegulatedMotor motor : new NXTRegulatedMotor[] { leftMotor,
 				rightMotor }) {
 			motor.stop();
-			motor.setAcceleration(1500);
+			motor.setAcceleration(1000);
 		}
 	}
 
@@ -65,6 +66,11 @@ public class Navigation{
 			 * try { Thread.sleep(1000); } catch (InterruptedException e) { }
 			 */
 	}
+	
+	public void moveBy(double distance){//TODO: check if negative numbers make wheels go backwards
+		leftMotor.rotate(convertDistance(WHEEL_RADIUS, distance), true);
+		rightMotor.rotate(convertDistance(WHEEL_RADIUS, distance), false);
+	}
 
 	/**
 	 * This method causes the robot to turn (on point) to the absolute heading
@@ -75,10 +81,19 @@ public class Navigation{
 		deltaTheta = smarterTurns(deltaTheta);
 		int turningAngle = (int) (deltaTheta * WIDTH / 2 / WHEEL_RADIUS);
 		
-		leftMotor.setSpeed(75);
-		rightMotor.setSpeed(75);
+		leftMotor.setSpeed(ROTATION_SPEED);
+		rightMotor.setSpeed(ROTATION_SPEED);
 		leftMotor.rotate(turningAngle, true);
 		rightMotor.rotate(-turningAngle, false); // turnTo minimal angle
+	}
+	
+	/**
+	 * 
+	 * @param speed
+	 */
+	public static void go(int speed) {
+		Motor.A.setSpeed(speed);
+		Motor.B.setSpeed(speed);
 	}
 
 	// this method converts an input between 0 and 360 to an output between -180 and 180
@@ -113,120 +128,23 @@ public class Navigation{
 	public static double getThetaCurrent() {
 		return thetaCurrent;
 	}
+	
+	public void setBackward(){
+		Motor.A.backward();
+		Motor.B.backward();
+	}
+	
+	public void setForward(){
+		Motor.A.forward();
+		Motor.B.forward();
+	}
+	
+	public void setClockwise() {
+		Motor.A.forward();
+		Motor.B.backward();		
+	}
+	public void setCounterClockwise() {
+		Motor.A.backward();		
+		Motor.B.forward();
+	}
 }
-
-
-//
-//
-//public class Navigation {
-//	// put your navigation code here 
-//	
-//	private Odometer odometer;
-//	private TwoWheeledRobot robot;
-//	
-//	final static int FAST = 200, SLOW = 100, ACCELERATION = 1000;
-//	final static double DEG_ERR = 3.0, CM_ERR = 1.0;
-//	private NXTRegulatedMotor leftMotor = Motor.A;
-//	private NXTRegulatedMotor rightMotor = Motor.B;
-//
-//
-//	public Navigation(Odometer odo) {
-//		this.odometer = odo;
-//		this.robot = odo.getTwoWheeledRobot();
-//
-//		// set acceleration
-//		this.leftMotor.setAcceleration(ACCELERATION);
-//		this.rightMotor.setAcceleration(ACCELERATION);
-//	}
-//
-//	/*
-//	 * Functions to set the motor speeds jointly
-//	 */
-//	public void setSpeeds(float lSpd, float rSpd) {
-//		this.leftMotor.setSpeed(lSpd);
-//		this.rightMotor.setSpeed(rSpd);
-//		if (lSpd < 0)
-//			this.leftMotor.backward();
-//		else
-//			this.leftMotor.forward();
-//		if (rSpd < 0)
-//			this.rightMotor.backward();
-//		else
-//			this.rightMotor.forward();
-//	}
-//
-//	public void setSpeeds(int lSpd, int rSpd) {
-//		this.leftMotor.setSpeed(lSpd);
-//		this.rightMotor.setSpeed(rSpd);
-//		if (lSpd < 0)
-//			this.leftMotor.backward();
-//		else
-//			this.leftMotor.forward();
-//		if (rSpd < 0)
-//			this.rightMotor.backward();
-//		else
-//			this.rightMotor.forward();
-//	}
-//
-//	/*
-//	 * Float the two motors jointly
-//	 */
-//	public void setFloat() {
-//		this.leftMotor.stop();
-//		this.rightMotor.stop();
-//		this.leftMotor.flt(true);
-//		this.rightMotor.flt(true);
-//	}
-//
-//	/*
-//	 * TravelTo function which takes as arguments the x and y position in cm Will travel to designated position, while
-//	 * constantly updating it's heading
-//	 */
-//	public void travelTo(double x, double y) {
-//		double minAng;
-//		while (Math.abs(x - odometer.getX()) > CM_ERR || Math.abs(y - odometer.getY()) > CM_ERR) {
-//			minAng = (Math.atan2(y - odometer.getY(), x - odometer.getX())) * (180.0 / Math.PI);
-//			if (minAng < 0)
-//				minAng += 360.0;
-//			this.turnTo(minAng, false);
-//			this.setSpeeds(FAST, FAST);
-//		}
-//		this.setSpeeds(0, 0);
-//	}
-//
-//	/*
-//	 * TurnTo function which takes an angle and boolean as arguments The boolean controls whether or not to stop the
-//	 * motors when the turn is completed
-//	 */
-//	public void turnTo(double angle, boolean stop) {
-//
-//		double error = angle - this.odometer.getAng();
-//
-//		while (Math.abs(error) > DEG_ERR) {
-//
-//			error = angle - this.odometer.getAng();
-//
-//			if (error < -180.0) {
-//				this.setSpeeds(-SLOW, SLOW);
-//			} else if (error < 0.0) {
-//				this.setSpeeds(SLOW, -SLOW);
-//			} else if (error > 180.0) {
-//				this.setSpeeds(SLOW, -SLOW);
-//			} else {
-//				this.setSpeeds(-SLOW, SLOW);
-//			}
-//		}
-//
-//		if (stop) {
-//			this.setSpeeds(0, 0);
-//		}
-//	}
-//	
-//	/*
-//	 * Go forward a set distance in cm
-//	 */
-//	public void goForward(double distance) {
-//		this.travelTo(Math.cos(Math.toRadians(this.odometer.getAng())) * distance, Math.cos(Math.toRadians(this.odometer.getAng())) * distance);
-//
-//	}
-//}

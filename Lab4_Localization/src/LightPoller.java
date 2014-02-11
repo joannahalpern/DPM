@@ -19,7 +19,15 @@ public class LightPoller extends Thread{
 	}
 	
 	public void run() {
-		lsLocalizer.doLocalization();
+		while(true){
+			if (Lab4.myMutex == 1){
+				lsLocalizer.doLocalization();
+				Lab4.myMutex=0;
+			}
+			else{
+				try { Thread.sleep(500); } catch(Exception e){}
+			}
+		}
 	}
 
 }

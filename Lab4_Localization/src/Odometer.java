@@ -21,7 +21,7 @@ public class Odometer implements TimerListener {
 		theta = 0.0;
 		oldDH = new double [2];
 		dDH = new double [2];
-		lock = new Object();
+		lock = Lab4.lock;
 		
 		// start the odometer immediately, if necessary
 		if (start)
@@ -81,6 +81,12 @@ public class Odometer implements TimerListener {
 			if (update[0]) x = pos[0];
 			if (update[1]) y = pos[1];
 			if (update[2]) theta = pos[2];
+		}
+	}
+	
+	public void setAngle(double angle){
+		synchronized (lock) {
+			this.theta = angle;
 		}
 	}
 	
