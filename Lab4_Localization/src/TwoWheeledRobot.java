@@ -3,7 +3,7 @@ import lejos.nxt.NXTRegulatedMotor;
 public class TwoWheeledRobot {
 	public static final double DEFAULT_LEFT_RADIUS = 2.075;
 	public static final double DEFAULT_RIGHT_RADIUS = 2.075;
-	public static final double DEFAULT_WIDTH = 14.9;
+	public static final double DEFAULT_WIDTH = Navigation.WIDTH;
 	private NXTRegulatedMotor leftMotor, rightMotor;
 	private double leftRadius, rightRadius, width;
 	private double forwardSpeed, rotationSpeed;

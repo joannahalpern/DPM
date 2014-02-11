@@ -10,7 +10,7 @@ public class USLocalizer {
 	private UltrasonicSensor us;
 	private LocalizationType locType;
 	private static double distance = 9999;
-	private static double angleA1, angleA2, angleB1, angleB2;
+	private static double angleA, angleB;
 	
 	public USLocalizer(Odometer odo, UltrasonicSensor us, LocalizationType locType, Navigation nav) {
 		this.nav = nav;
@@ -27,13 +27,17 @@ public class USLocalizer {
 	public void doLocalization() {
 		
 		double [] pos = new double [3];
-//		double angleA1, angleA2, angleB1, angleB2;
-		
+		//Case: FALLING EDGE
 		if (locType == LocalizationType.FALLING_EDGE) {
 			
+			//Robot turns clockwise until it see a wall
+			//if it already doesn't see a wall, it skips this first while loop
 			nav.setClockwise();
 			while (isWallSeen()){
 				Navigation.go(Navigation.ROTATION_SPEED);
+			//Now the robot is facing a wall and it continues rotating clockwise until
+			//it no longer sees a wall
+			//It then stops and latches it's current angle
 			}
 			while (!isWallSeen()){
 				Navigation.go(Navigation.ROTATION_SPEED);
@@ -42,12 +46,15 @@ public class USLocalizer {
 			Motor.B.stop(false);
 			
 			odo.getPosition(pos);
-			angleA1 = pos[2];
+			angleA = pos[2];
 			
+			//The robot then turns counter clockwise until is sees a wall
 			nav.setCounterClockwise();
 			while (isWallSeen()){
 				Navigation.go(Navigation.ROTATION_SPEED);
 			}
+			//Then the robot continues counter clockwise until it doesn't see a wall
+			//It will then latch that angle
 			while (!isWallSeen()){
 				Navigation.go(Navigation.ROTATION_SPEED);
 			}
@@ -55,17 +62,24 @@ public class USLocalizer {
 			Motor.B.stop(false);
 			
 			odo.getPosition(pos);
-			angleB1 = pos[2];
+			angleB = pos[2];
 			
-			double currentAngle = fixDegAngle(-calculateChangeAngleToZero(angleA1, angleB1, locType));
+			//Using the 2 latched angles, it calculates what it's current angle must be and puts that between 0 and 360 degrees
+			double currentAngle = fixDegAngle(-calculateChangeAngleToZero(angleA, angleB, locType));
 			
 			odo.setPosition(new double [] {0.0, 0.0, currentAngle}, new boolean [] {true, true, true});
 		} 
-		else{//RISING EDGE
+		else{//Case: RISING EDGE
 			nav.setClockwise();
+			//robot passes first wall if it has started not facing the wall
 			while (!isWallSeen()){
 				Navigation.go(Navigation.ROTATION_SPEED);
+				if (isWallSeen()){ //if a wall is seen, it waits before checking again so that it doesn't skip the
+								   //next part and latch an angle too soon
+					try { Thread.sleep(500); } catch(Exception e){}
+				}
 			}
+			//robot turns until it stops seeing the wall and it latches that angle
 			while (isWallSeen()){
 				Navigation.go(Navigation.ROTATION_SPEED);
 			}
@@ -73,22 +87,27 @@ public class USLocalizer {
 			Motor.B.stop(false);
 			
 			odo.getPosition(pos);
-			angleA2 = pos[2];
+			angleA = pos[2];
 			
+			
+			//
 			nav.setCounterClockwise();
 			while (!isWallSeen()){
 				Navigation.go(Navigation.ROTATION_SPEED);
+				if (isWallSeen()){ //if a wall is seen, it waits before checking again so that it doesn't skip the
+								   //next part and latch an angle too soon
+					try { Thread.sleep(500); } catch(Exception e){}
+				}
 			}
 			while (isWallSeen()){
 				Navigation.go(Navigation.ROTATION_SPEED);
 			}
-			Motor.A.stop(true);
-			Motor.B.stop(false);
-			
 			odo.getPosition(pos);
-			angleB2 = pos[2];
+			angleB = pos[2];
+
+			Motor.A.stop(true);
 			
-			double currentAngle = fixDegAngle(-calculateChangeAngleToZero(angleA2, angleB2, locType));
+			double currentAngle = fixDegAngle(-calculateChangeAngleToZero(angleA, angleB, locType));
 			
 			odo.setPosition(new double [] {0.0, 0.0, currentAngle}, new boolean [] {true, true, true});
 			}
@@ -145,19 +164,19 @@ public class USLocalizer {
 	}
 	
 	public static double getAngleA1() {
-		return angleA1;
+		return angleA;
 	}
 
 	public static double getAngleA2() {
-		return angleA2;
+		return angleA;
 	}
 
 	public static double getAngleB1() {
-		return angleB1;
+		return angleB;
 	}
 
 	public static double getAngleB2() {
-		return angleB2;
+		return angleB;
 	}
 
 	private double backToRawAngles(double inAngle){

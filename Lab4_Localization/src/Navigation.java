@@ -12,7 +12,7 @@ import lejos.nxt.NXTRegulatedMotor;
  */
 public class Navigation{
 	public static final int FWD_SPEED = 250;
-	public static final double WIDTH = 14.9;
+	public static final double WIDTH = 15.45;
 	public static final double WHEEL_RADIUS = 2.075;
 	public static final int ROTATION_SPEED = 75;
 	public static double dT = 0;
