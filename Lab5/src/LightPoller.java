@@ -16,16 +16,16 @@ public class LightPoller extends Thread{
 	
 
 	
-	public LightPoller(ColorSensor ls, LightLocalizer lsLocalizer, Navigation nav, Lab5.Colour colour) {
+	public LightPoller(ColorSensor ls, LightLocalizer lsLocalizer, Navigation nav) {
 		this.ls = ls;
 		this.lsLocalizer = lsLocalizer;
 		this.nav = nav;
-		this.colour = colour;
+		this.colour = Lab5.colour;
 	}
 	
 	public void run() {
+		setFloodLight(Lab5.colour);
 		while(true){//sleep every half second until myMutex (permission variable) goes to 1
-			setFloodLight(colour);
 			colourVal = ls.getRawLightValue();
 			try { Thread.sleep(50); } catch(Exception e){}
 			}
