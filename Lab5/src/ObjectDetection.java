@@ -6,7 +6,8 @@
 
 import lejos.nxt.*;
 
-public class Lab5 {
+public class ObjectDetection {
+	private static final double OBSTACLE_THRESHOLD = 6;
 	public static int myMutex = 0; //global variable
 	public static int counter = 0;
 	
@@ -19,6 +20,10 @@ public class Lab5 {
 	
 	public static enum Colour{
 		RED, BLUE, GREEN, OFF
+	}
+	
+	public static enum BlockType{
+		STYROFOAM, WOOD
 	}
 	public static Colour colour = Colour.OFF;
 	
@@ -95,25 +100,18 @@ public class Lab5 {
 		System.exit(0);
 
 	}
-
-	public static int getCounter() {
-		return counter;
+	
+	public boolean isBlock(UltrasonicPoller usPoller){
+		double distance = usPoller.getDistance();
+		if (distance< OBSTACLE_THRESHOLD){
+			return true;
+		}
+		return false;
 	}
 	
-	public static Colour chooseColour(int counter){
-		Colour colour;
-		if (counter == 0){
-			colour = Colour.RED;
-		}
-		else if(counter == 1){
-			colour = Colour.GREEN;
-		}
-		else if(counter == 2){
-			colour = Colour.BLUE;
-		}
-		else{
-			colour = Colour.OFF;
-		}
-		return colour;
+	public void identifyBlock(LightPoller lsPoller){
+		double colourVal = lsPoller.getColourVal();
+		BlockType blockType = BlockType.WOOD;
 	}
+
 }

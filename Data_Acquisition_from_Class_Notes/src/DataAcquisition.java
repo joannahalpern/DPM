@@ -23,7 +23,7 @@ public class DataAcquisition implements TimerListener {
 	public static int currentSample;
 /* Objects instanced once by this class */
 	
-	static LightSensor myLight = new LightSensor(SensorPort.S2);
+	static ColorSensor myLight = new ColorSensor(SensorPort.S2);
 	static TouchSensor myTouch = new TouchSensor(SensorPort.S3);
 	
 /* Class entry point (main) starts here */
@@ -36,7 +36,7 @@ public class DataAcquisition implements TimerListener {
 		
 		/* Open channel to remote console */
 		
-		RConsole.openBluetooth(TIMEOUT);
+		RConsole.openUSB(TIMEOUT);
 		
 		/* Set up display area */
 		
@@ -82,7 +82,7 @@ public class DataAcquisition implements TimerListener {
 	 * Data acquisition loop is implemented in the timer handler (listener)
 	 */
 		public void timedOut() {
-			currentSample=myLight.readValue();
+			currentSample=myLight.getRawLightValue();
 			numSamples++;
 			RConsole.println(Integer.toString(currentSample));
 		}
