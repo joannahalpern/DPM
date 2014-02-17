@@ -4,15 +4,21 @@
  * Joanna Halpern - 260410826
  */
 
+import java.util.Queue;
+
 import lejos.nxt.ColorSensor;
 
 
 public class LightPoller extends Thread{
+	public static final int QUEUE_SIZE = 5;
+	public static final long POLLING_PERIOD = 50;
 	private ColorSensor ls;
 	private LightLocalizer lsLocalizer;
 	private Navigation nav;
 	private double colourVal = 99999;
-	private Lab5.Colour colour;
+	private Colour colour;
+	private Queue<Double> coloursQueue;
+	
 	
 
 	
@@ -20,18 +26,22 @@ public class LightPoller extends Thread{
 		this.ls = ls;
 		this.lsLocalizer = lsLocalizer;
 		this.nav = nav;
-		this.colour = Lab5.colour;
+		this.colour = Lab5Detection.getColour();
+		
+		initializeQueue();
 	}
 	
 	public void run() {
-		setFloodLight(Lab5.colour);
+		setFloodLight(Lab5Detection.getColour());
 		while(true){//sleep every half second until myMutex (permission variable) goes to 1
 			colourVal = ls.getRawLightValue();
-			try { Thread.sleep(50); } catch(Exception e){}
+			coloursQueue.push(colourVal);
+			coloursQueue.pop();
+			try { Thread.sleep(POLLING_PERIOD); } catch(Exception e){}
 			}
 		}
 
-	private void setFloodLight(Lab5.Colour colour) {
+	private void setFloodLight(Colour colour) {
 		ls.setFloodlight(true);
 		switch (colour){
 			case RED:
@@ -45,6 +55,7 @@ public class LightPoller extends Thread{
 				break;
 				
 			case BLUE:
+				ls.setFloodlight(false);
 				ls.setFloodlight(ColorSensor.Color.BLUE);
 				break;
 			
@@ -56,6 +67,58 @@ public class LightPoller extends Thread{
 
 	public double getColourVal() {
 		return colourVal;
+	}
+
+	//initialize queue with 5 values
+	private void initializeQueue() {
+		coloursQueue = new Queue<Double>();
+		for (int i = 0; i<QUEUE_SIZE; i++){
+			coloursQueue.addElement(9999.9);
+		}
+	}
+	
+	/**
+	 * computes mean of all the values in the coloursQueue
+	 */
+	public double getMean(){
+		Double sum = 0.0;
+		Double temp = 0.0;
+		
+		for (int i = 0; i<QUEUE_SIZE; i++){
+			temp = ((Double) coloursQueue.pop());
+			sum = sum + temp; //sum everything in queue
+			coloursQueue.push(temp); //put values back in queue afterwards
+		}
+		double mean = (double) (sum/QUEUE_SIZE); //mean formula
+		return mean;
+	}
+	
+	//TODO not yet tested
+	/**
+	 * computes median of all the values in the coloursQueue
+	 * by putting queue into array, sorting the array with QuickSort,
+	 * then returning the middle value of that array.
+	 * 
+	 * If the array is an even number size, it will return the larger
+	 * of the two middle numbers
+	 */
+	public double getMedian(){
+		double array[] = new double[QUEUE_SIZE];
+		Double temp;
+		
+		//put all colour values from the queue into an array
+		for (int i = 0; i<QUEUE_SIZE; i++){
+			temp = ((Double) coloursQueue.pop());
+			array[i] = temp; 
+			coloursQueue.push(temp); //put values back in queue afterwards
+		}
+		
+		//sort the array
+		QuickSort.quickSort(array, 0, QUEUE_SIZE);
+		double median = array[(QUEUE_SIZE/2 + 1)]; //median is the middle number of the sorted array
+		
+		return median;
+				
 	}
 	
 
