@@ -114,12 +114,9 @@ public class LightPoller extends Thread{
 		}
 		
 		//sort the array
-		QuickSort.quickSort(array, 0, QUEUE_SIZE);
+		QuickSort.quickSort(array, 0, (QUEUE_SIZE-1));
 		double median = array[(QUEUE_SIZE/2 + 1)]; //median is the middle number of the sorted array
 		
 		return median;
-				
 	}
-	
-
 }

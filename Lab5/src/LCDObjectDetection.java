@@ -25,6 +25,26 @@ public class LCDObjectDetection implements TimerListener{
 	public void timedOut() { 
 		LCD.clear();
 		
+		BlockType blockType = objectDetection.getBlockType();
+		switch (blockType){
+		case STYROFOAM:
+			LCD.drawString("STYROFOAM", 0, 5);
+			break;
+		case WOOD:
+			LCD.drawString("WOOD", 0, 5);
+			break;
+		case UNKNOWN:
+			LCD.drawString("UNKNOWN", 0, 5);
+			break;
+		}
+		
+		
+//		LCD.drawString("Mean Colour= " + lightPoller.getMean(), 0, 1);
+//		LCD.drawString("Mean Dis = " + usPoller.getMean(), 0, 1);
+//		LCD.drawString("Median C = " + lightPoller.getMedian(), 0, 2);
+		LCD.drawString("Median D = " + usPoller.getMedian(), 0, 2);
+
+		
 		LCD.drawString("Colour = " + lightPoller.getColourVal(), 0, 3);
 		LCD.drawString("Distance = " + usPoller.getDistance(), 0, 4);
 		

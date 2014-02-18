@@ -4,6 +4,9 @@
  * Joanna Halpern - 260410826
  */
 
+//
+//if block 
+
 import lejos.nxt.*;
 
 public class ObjectDetection extends Thread {
@@ -19,6 +22,7 @@ public class ObjectDetection extends Thread {
 	private Navigation nav;
 	private boolean objectDetected;
 	private boolean block;
+	private BlockType blockType;
 	
 	public ObjectDetection(UltrasonicPoller usPoller, LightPoller lsPoller, Navigation nav){
 		this.usPoller = usPoller;
@@ -26,6 +30,7 @@ public class ObjectDetection extends Thread {
 		this.nav = nav;
 		this.objectDetected = false;
 		this.block = false;
+		this.blockType = BlockType.UNKNOWN;
 	}
 	
 	public void run() {
@@ -39,21 +44,20 @@ public class ObjectDetection extends Thread {
 					nav.go(50);
 				}
 				nav.go(0);//stop
-				BlockType blockType = identifyBlock(lsPoller);
+				blockType = identifyBlock(lsPoller);
 				switch (blockType){
 					case STYROFOAM:
-						block = true; //display "Block" on LCD
+						block = true; //displays "Block" on LCD
 						break;
 					case WOOD:
-						block = false; //display "Not Block" on LCD
+						block = false; //displays "Not Block" on LCD
 						break;
 					case UNKNOWN:
-						block = false; //display "Not Block" on LCD
+						block = false; //displays "Not Block" on LCD
 						break;
-				}
-				switch (blockType){
-				case WOOD:
-					
+					default:
+						block = false;
+						break;
 				}
 			try { Thread.sleep(50); } catch(Exception e){}
 		}
@@ -63,7 +67,7 @@ public class ObjectDetection extends Thread {
 	}
 
 	public boolean isBlockinRange(UltrasonicPoller usPoller, double threshold){
-		double distance = usPoller.getDistance();
+		double distance = usPoller.getMean();
 		if (distance< threshold){
 			return true;
 		}
@@ -78,15 +82,12 @@ public class ObjectDetection extends Thread {
 		
 		if ((LOWER_FOAM_LIMIT < colourVal) && (colourVal < UPPER_FOAM_LIMIT)){
 			blockType = BlockType.STYROFOAM;
-//			block = true;
 		}
 		else if ((LOWER_WOOD_LIMIT) < colourVal && colourVal < (UPPER_WOOD_LIMIT)){
 			blockType = BlockType.WOOD;
-//			block = true;
 		}
 		else{
-			blockType = BlockType.STYROFOAM;
-//			block = false;
+			blockType = BlockType.UNKNOWN;
 		}
 		
 		return blockType;
@@ -98,6 +99,10 @@ public class ObjectDetection extends Thread {
 
 	public boolean isBlock() {
 		return block;
+	}
+	
+	public BlockType getBlockType(){
+		return blockType;
 	}
 
 }

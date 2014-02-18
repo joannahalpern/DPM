@@ -1,4 +1,8 @@
-
+//Robot can detect if there is an object and display message. 
+//We still need to: 
+//change the threshold values 
+//test mean and median method 
+//put median and mean into ultrasonic poller as well
 
 import lejos.nxt.*;
 
