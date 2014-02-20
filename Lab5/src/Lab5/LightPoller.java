@@ -1,19 +1,16 @@
-/*
- * Lab4- Group 53 - LightPoller
- * Harris Miller - 260499543
- * Joanna Halpern - 260410826
- */
+package Lab5;
+
 
 import java.util.Queue;
 
+import PartA_Detection.Lab5_PartA_Detection;
 import lejos.nxt.ColorSensor;
 
 
 public class LightPoller extends Thread{
-	public static final int QUEUE_SIZE = 5;
-	public static final long POLLING_PERIOD = 50;
+	public static final int QUEUE_SIZE = 9;
+	public static final long POLLING_PERIOD = 50; // (1 poll per 50ms)
 	private ColorSensor ls;
-	private LightLocalizer lsLocalizer;
 	private Navigation nav;
 	private double colourVal = 99999;
 	private Colour colour;
@@ -22,18 +19,17 @@ public class LightPoller extends Thread{
 	
 
 	
-	public LightPoller(ColorSensor ls, LightLocalizer lsLocalizer, Navigation nav) {
+	public LightPoller(ColorSensor ls, Navigation nav, Colour colour) {
 		this.ls = ls;
-		this.lsLocalizer = lsLocalizer;
 		this.nav = nav;
-		this.colour = Lab5Detection.getColour();
+		this.colour = colour;
 		
 		initializeQueue();
 	}
 	
 	public void run() {
-		setFloodLight(Lab5Detection.getColour());
-		while(true){//sleep every half second until myMutex (permission variable) goes to 1
+		setFloodLight(colour);
+		while(true){//sleep every twentieth second until myMutex (permission variable) goes to 1
 			colourVal = ls.getRawLightValue();
 			coloursQueue.push(colourVal);
 			coloursQueue.pop();
@@ -41,7 +37,7 @@ public class LightPoller extends Thread{
 			}
 		}
 
-	private void setFloodLight(Colour colour) {
+	public void setFloodLight(Colour colour) {
 		ls.setFloodlight(true);
 		switch (colour){
 			case RED:

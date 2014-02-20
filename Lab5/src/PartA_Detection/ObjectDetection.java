@@ -1,12 +1,13 @@
-/*
- * Lab5- Group 53 - ObjectDetection
- * Harris Miller - 260499543
- * Joanna Halpern - 260410826
- */
+package PartA_Detection;
+
 
 //
 //if block 
 
+import Lab5.BlockType;
+import Lab5.LightPoller;
+import Lab5.Navigation;
+import Lab5.UltrasonicPoller;
 import lejos.nxt.*;
 
 public class ObjectDetection extends Thread {
@@ -67,7 +68,7 @@ public class ObjectDetection extends Thread {
 	}
 
 	public boolean isBlockinRange(UltrasonicPoller usPoller, double threshold){
-		double distance = usPoller.getMean();
+		double distance = usPoller.getMeanDistance();
 		if (distance< threshold){
 			return true;
 		}

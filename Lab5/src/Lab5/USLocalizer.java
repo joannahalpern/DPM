@@ -1,8 +1,5 @@
-/*
- * ECSE 211 Lab 4 - Group 53
- * Harris Miller - 260499543
- * Joanna Halpern - 260410826
- */
+package Lab5;
+
 
 import lejos.nxt.Motor;
 import lejos.nxt.UltrasonicSensor;
@@ -18,13 +15,15 @@ public class USLocalizer {
 	private static double distance = 9999; //this is distance to the wall as seen by ultra sonic sensor
 										   //this value will change as soon as the sensor starts polling
 	private static double angleA, angleB;
+	private UltrasonicPoller usPoller;
 	
-	public USLocalizer(Odometer odo, UltrasonicSensor us, LocalizationType locType, Navigation nav) {
+	public USLocalizer(Odometer odo, UltrasonicSensor us, LocalizationType locType, Navigation nav, UltrasonicPoller usPoller) {
 		this.nav = nav;
 		this.odo = odo;
 		this.robot = odo.getTwoWheeledRobot();
 		this.us = us;
 		this.locType = locType;
+		this.usPoller = usPoller;
 		
 		
 		// switch off the ultrasonic sensor
@@ -45,13 +44,13 @@ public class USLocalizer {
 			//if it already doesn't see a wall, it skips this first while loop
 			nav.setClockwise();
 			while (isWallSeen()){
-				Navigation.go(Navigation.ROTATION_SPEED);
+				Navigation.go(Navigation.rotationSpeed);
 			//Now the robot is facing a wall and it continues rotating clockwise until
 			//it no longer sees a wall
 			//It then stops and latches it's current angle
 			}
 			while (!isWallSeen()){
-				Navigation.go(Navigation.ROTATION_SPEED);
+				Navigation.go(Navigation.rotationSpeed);
 			}
 			Motor.A.stop(true);
 			Motor.B.stop(false);
@@ -62,12 +61,12 @@ public class USLocalizer {
 			//The robot then turns counter clockwise until is sees a wall
 			nav.setCounterClockwise();
 			while (isWallSeen()){
-				Navigation.go(Navigation.ROTATION_SPEED);
+				Navigation.go(Navigation.rotationSpeed);
 			}
 			//Then the robot continues counter clockwise until it doesn't see a wall
 			//It will then latch that angle
 			while (!isWallSeen()){
-				Navigation.go(Navigation.ROTATION_SPEED);
+				Navigation.go(Navigation.rotationSpeed);
 			}
 			Motor.A.stop(true);
 			Motor.B.stop(false);
@@ -84,7 +83,7 @@ public class USLocalizer {
 			nav.setClockwise();
 			//robot passes first wall if it has started not facing the wall
 			while (!isWallSeen()){
-				Navigation.go(Navigation.ROTATION_SPEED);
+				Navigation.go(Navigation.rotationSpeed);
 				if (isWallSeen()){ //if a wall is seen, it waits before checking again so that it doesn't skip the
 								   //next part and latch an angle too soon
 					try { Thread.sleep(500); } catch(Exception e){}
@@ -92,7 +91,7 @@ public class USLocalizer {
 			}
 			//robot turns until it stops seeing the wall and it latches that angle
 			while (isWallSeen()){
-				Navigation.go(Navigation.ROTATION_SPEED);
+				Navigation.go(Navigation.rotationSpeed);
 			}
 			Motor.A.stop(true);
 			Motor.B.stop(false);
@@ -104,7 +103,7 @@ public class USLocalizer {
 			//Robot turns counterclockwise until it sees a wall again
 			nav.setCounterClockwise();
 			while (!isWallSeen()){
-				Navigation.go(Navigation.ROTATION_SPEED);
+				Navigation.go(Navigation.rotationSpeed);
 				if (isWallSeen()){ //if a wall is seen, it waits before checking again so that it doesn't skip the
 								   //next part and latch an angle too soon
 					try { Thread.sleep(250); } catch(Exception e){}
@@ -113,7 +112,7 @@ public class USLocalizer {
 			//Robot turns counter clockwise until it doesn't see a wall again
 			//It then latches that angle
 			while (isWallSeen()){
-				Navigation.go(Navigation.ROTATION_SPEED);
+				Navigation.go(Navigation.rotationSpeed);
 			}
 			odo.getPosition(pos);
 			angleB = pos[2];
@@ -134,9 +133,9 @@ public class USLocalizer {
 	 * Else returns false
 	 */
 	public boolean isWallSeen(){
-		distance = getFilteredData();
+		distance = usPoller.getMedianDistance();
 
-		if (distance < 32){
+		if (distance < 34){
 			return true;
 		}
 		return false;
@@ -189,19 +188,11 @@ public class USLocalizer {
 
 	}
 	
-	public static double getAngleA1() {
+	public static double getAngleA() {
 		return angleA;
 	}
 
-	public static double getAngleA2() {
-		return angleA;
-	}
-
-	public static double getAngleB1() {
-		return angleB;
-	}
-
-	public static double getAngleB2() {
+	public static double getAngleB() {
 		return angleB;
 	}
 	/**

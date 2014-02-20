@@ -1,14 +1,23 @@
+package Testing;
 /*
  * Lab5- Group 53 - ColourTestingExperiment
  * Harris Miller - 260499543
  * Joanna Halpern - 260410826
  */
 
+import Lab5.Colour;
+import Lab5.LCDInfo;
+import Lab5.LightPoller;
+import Lab5.Navigation;
+import Lab5.Odometer;
+import Lab5.TwoWheeledRobot;
+import Lab5.USLocalizer;
+import Lab5.UltrasonicPoller;
+import Lab5.USLocalizer.LocalizationType;
 import lejos.nxt.*;
 
 public class ColourTestingExperiment {
 	public static int myMutex = 0; //global variable
-	public static int counter = 0;
 	
 	/* Create an object that can be used for synchronization across threads. */
 
@@ -16,11 +25,6 @@ public class ColourTestingExperiment {
 	}
 
 	static public theLock lock = new theLock();
-	
-	public static enum Colour{
-		RED, BLUE, GREEN, OFF
-	}
-	public static Colour colour = Colour.OFF;
 	
 	public static void main(String[] args) {
 		
@@ -43,45 +47,37 @@ public class ColourTestingExperiment {
 		
 		Navigation nav = new Navigation(odo);
 		
-		USLocalizer usLocalizer = new USLocalizer(odo, us, USLocalizer.LocalizationType.FALLING_EDGE, nav);
-		UltrasonicPoller usPoller = new UltrasonicPoller(us, usLocalizer);
+		UltrasonicPoller usPoller = new UltrasonicPoller(us);
+		USLocalizer usLocalizer = new USLocalizer(odo, us, USLocalizer.LocalizationType.FALLING_EDGE, nav, usPoller);
 
 		// perform the light sensor localization
-		LightLocalizer lsl = new LightLocalizer(odo, marshmallow, ls, nav);
-		LightPoller lsPoller = new LightPoller( ls, lsl, nav);
+		LightPoller lsPoller = new LightPoller( ls, nav, Colour.BLUE);
 		
 
 		int option = 0;
 		while (option == 0)
 			option = Button.waitForAnyPress();
 			
-		LCDInfo lcd = new LCDInfo(odo, lsPoller, usPoller);
+		LCDInfo lcd = new LCDInfo(odo, lsPoller, usPoller, usLocalizer);
 		
 		switch(option) {
 		case Button.ID_LEFT:
-//			try { Thread.sleep(1000); } catch(Exception e){}
-//				counter++;
-//				counter = counter%4;
-//				colour = chooseColour(counter);
-			colour = Colour.RED;
+			lsPoller.setFloodLight(Colour.RED);
 			lsPoller.start();
 			usPoller.start();
 			break;
 		case Button.ID_RIGHT:
-//			try { Thread.sleep(1000); } catch(Exception e){}
-			colour = Colour.GREEN;
+			lsPoller.setFloodLight(Colour.GREEN);
 			lsPoller.start();
 			usPoller.start();
 			break;
 		case Button.ID_ENTER:
-//			try { Thread.sleep(1000); } catch(Exception e){}
-			colour = Colour.BLUE;
+			lsPoller.setFloodLight(Colour.BLUE);
 			lsPoller.start();
 			usPoller.start();
 			break;
 		case Button.ID_ESCAPE:
-//			try { Thread.sleep(1000); } catch(Exception e){}
-			colour = Colour.OFF;
+			lsPoller.setFloodLight(Colour.OFF);
 			lsPoller.start();
 			usPoller.start();
 			break;
@@ -95,11 +91,6 @@ public class ColourTestingExperiment {
 		System.exit(0);
 
 	}
-
-	public static int getCounter() {
-		return counter;
-	}
-	
 	public static Colour chooseColour(int counter){
 		Colour colour;
 		if (counter == 0){

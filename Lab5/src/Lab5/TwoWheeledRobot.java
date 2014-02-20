@@ -1,3 +1,5 @@
+package Lab5;
+
 import lejos.nxt.NXTRegulatedMotor;
 
 public class TwoWheeledRobot {

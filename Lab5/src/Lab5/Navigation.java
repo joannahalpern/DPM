@@ -1,8 +1,5 @@
-/*
- * Lab4- Group 53 - Navigation
- * Harris Miller - 260499543
- * Joanna Halpern - 260410826
- */
+package Lab5;
+
 
 import lejos.nxt.Motor;
 import lejos.nxt.NXTRegulatedMotor;
@@ -15,10 +12,10 @@ import lejos.nxt.NXTRegulatedMotor;
  * 
  */
 public class Navigation{
-	public static final int FWD_SPEED = 250;
-	public static final double WIDTH = 15.45;
-	public static final double WHEEL_RADIUS = 2.075;
-	public static final int ROTATION_SPEED = 75;
+	public static int fwdSpeed = 250;
+	public static int rotationSpeed = 125;
+	public static final double WIDTH = 15.3;
+	public static final double WHEEL_RADIUS = 2.09;
 	public static double dT = 0;
 	private Odometer odometer;
 	private static double xCurrent = 0;
@@ -36,6 +33,19 @@ public class Navigation{
 		}
 	}
 
+	/**
+	 * In this constructor you additionally set the forward speed and rotation speed
+	 */
+	public Navigation(Odometer odometer, int fwdSpeed, int rotationSpeed) {//initialize the navigator with stopped motors with low acceleration
+		this.odometer = odometer;
+		this.fwdSpeed = fwdSpeed;
+		this.rotationSpeed = rotationSpeed;
+		for (NXTRegulatedMotor motor : new NXTRegulatedMotor[] { leftMotor,
+				rightMotor }) {
+			motor.stop();
+			motor.setAcceleration(1000);
+		}
+	}
 	/**
 	 * This method causes the robot to travel to the absolute field location (x,
 	 * y). This method continuously call turnTo(double theta) and then set the
@@ -58,8 +68,8 @@ public class Navigation{
 			}
 			leftMotor.forward();
 			rightMotor.forward();
-			leftMotor.setSpeed(FWD_SPEED);
-			rightMotor.setSpeed(FWD_SPEED);
+			leftMotor.setSpeed(fwdSpeed);
+			rightMotor.setSpeed(fwdSpeed);
 
 			// totalDistance uses pythagoras theorem to calculate the total
 			// distance needed to travel
@@ -85,8 +95,8 @@ public class Navigation{
 		deltaTheta = smarterTurns(deltaTheta);
 		int turningAngle = (int) (deltaTheta * WIDTH / 2 / WHEEL_RADIUS);
 		
-		leftMotor.setSpeed(ROTATION_SPEED);
-		rightMotor.setSpeed(ROTATION_SPEED);
+		leftMotor.setSpeed(rotationSpeed);
+		rightMotor.setSpeed(rotationSpeed);
 		leftMotor.rotate(turningAngle, true);
 		rightMotor.rotate(-turningAngle, false); // turnTo minimal angle
 	}
@@ -99,7 +109,10 @@ public class Navigation{
 	// this method converts an input between 0 and 360 to an output between -180 and 180
 	public double smarterTurns(double dTheta) { 
 		int theta = (int) (dTheta * 100); //mod only with ints so we multiply by 100 now and divide at the bottom so we dont lose sigfigs
-		theta = (theta+36000*1000)%36000; //put theta between 0 and 360
+		while (theta<0){
+			theta += 36000; //put theta between 0 and 360
+		}
+		theta = theta%36000; 
 		
 		if (theta > 18000) { //puts theta between -180 and 180
 			theta -= 36000;
@@ -146,5 +159,11 @@ public class Navigation{
 	public void setCounterClockwise() {//set motors to run counterclockwise
 		Motor.A.backward();		
 		Motor.B.forward();
+	}
+	public void setForwardSpeed(int fwdSpeed){
+		this.fwdSpeed = fwdSpeed;
+	}
+	public void setRotationSpeed(int rotationSpeed){
+		this.rotationSpeed = rotationSpeed;
 	}
 }

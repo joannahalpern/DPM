@@ -1,9 +1,5 @@
-/*
+package Lab5;
 
- * Lab4- Group 53 - UltrasonicPoller
- * Harris Miller - 260499543
- * Joanna Halpern - 260410826
- */
 
 import java.util.Queue;
 
@@ -12,33 +8,32 @@ import lejos.nxt.UltrasonicSensor;
 //This code is what was given in lab 1 except that we added myMutex
 public class UltrasonicPoller extends Thread{
 	public static final int QUEUE_SIZE = 5;
-	private static final long POLLING_PERIOD = 50;
+	private static final long POLLING_PERIOD = 28;
 	private UltrasonicSensor us;
 	private USLocalizer uSLocalizer;
 	private double distance = 99999;
 	private Queue<Double> distancesQueue;
 	
-	public UltrasonicPoller(UltrasonicSensor us, USLocalizer uSLocalizer) {
+	public UltrasonicPoller(UltrasonicSensor us) {
 		this.us = us;
-		this.uSLocalizer = uSLocalizer;
 		
 		initializeQueue();
 	}
 	
 	public void run() {
 		while(true){
-			distance = filterDistance(us.getDistance());
-			distancesQueue.push(distance);
-			distancesQueue.pop();
+			distance = us.getDistance();
+			putDistanceInQueue(distance);
+		
 			try { Thread.sleep(POLLING_PERIOD); } catch(Exception e){}
 		}
 	}
 	
-	private double filterDistance(int distance) {
-		if (distance > 50){
-			return 50;
+	private void putDistanceInQueue(double distance) {
+		if (distance != 255){
+			distancesQueue.push(distance);
+			distancesQueue.pop();
 		}
-		return distance;
 	}
 
 	private void initializeQueue() {
@@ -48,7 +43,7 @@ public class UltrasonicPoller extends Thread{
 		}
 	}
 	
-	public double getMean(){
+	public double getMeanDistance(){
 		Double sum = 0.0;
 		Double temp = 0.0;
 		
@@ -60,7 +55,7 @@ public class UltrasonicPoller extends Thread{
 		double mean = (double) (sum/QUEUE_SIZE); //mean formula
 		return mean;
 	}
-	public double getMedian(){
+	public double getMedianDistance(){
 		double array[] = new double[QUEUE_SIZE];
 		Double temp;
 		

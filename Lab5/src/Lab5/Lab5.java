@@ -1,12 +1,10 @@
-//Robot can detect if there is an object and display message. 
-//We still need to: 
-//change the threshold values 
-//test mean and median method 
-//put median and mean into ultrasonic poller as well
+package Lab5;
+
 
 import lejos.nxt.*;
+import lejos.nxt.comm.RConsole;
 
-public class Lab5Detection {
+public class Lab5 {
 	public static int myMutex = 0; //global variable
 	
 	/* Create an object that can be used for synchronization across threads. */
@@ -15,18 +13,17 @@ public class Lab5Detection {
 	}
 
 	static public theLock lock = new theLock();
-
-	private static Colour colour = Colour.OFF;
+	
+	public static Colour colour = Colour.OFF;
 	
 	public static void main(String[] args) {
 		
 		LCD.clear();
-
-		// ask the user whether the motors should drive in a square or float
-		LCD.drawString("<--RED | GREEN->", 0, 0);
-		LCD.drawString("     |Blue|     ", 0, 1);
-		LCD.drawString("     | OFF|      ", 0, 2);
-		LCD.drawString("second push exits", 0, 5);
+		
+		LCD.drawString("     LAB 5      ", 0, 0);
+		LCD.drawString("Press center for", 0, 2);
+		LCD.drawString(" translational  ", 0, 3);
+		LCD.drawString("     scan       ", 0, 4);
 		
 
 		
@@ -39,39 +36,41 @@ public class Lab5Detection {
 		
 		Navigation nav = new Navigation(odo);
 		
-		USLocalizer usLocalizer = new USLocalizer(odo, us, USLocalizer.LocalizationType.FALLING_EDGE, nav);
-		UltrasonicPoller usPoller = new UltrasonicPoller(us, usLocalizer);
+		UltrasonicPoller usPoller = new UltrasonicPoller(us);
+		USLocalizer usLocalizer = new USLocalizer(odo, us, USLocalizer.LocalizationType.RISING_EDGE, nav, usPoller);
 
 		// perform the light sensor localization
-		LightLocalizer lsl = new LightLocalizer(odo, marshmallow, ls, nav);
-		LightPoller lsPoller = new LightPoller( ls, lsl, nav);
+		LightPoller lsPoller = new LightPoller( ls, nav, Colour.BLUE);
 		
-		ObjectDetection objectDetection = new ObjectDetection(usPoller, lsPoller, nav);
+		initializeRConsole();
+		RConsoleDisplay rcd = new RConsoleDisplay(odo, lsPoller, usPoller, usLocalizer);
+//		LCDInfo lcd = new LCDInfo(odo, lsPoller, usPoller, usLocalizer);
 
 		int option = 0;
 		while (option == 0)
 			option = Button.waitForAnyPress();
 			
-		LCDObjectDetection lcd = new LCDObjectDetection(odo, lsPoller, usPoller, objectDetection);
-		
 		switch(option) {
 		case Button.ID_LEFT:
-			colour = Colour.RED;
-			lsPoller.start();
+			try { Thread.sleep(1000); } catch(Exception e){}
 			usPoller.start();
+			usLocalizer.doLocalization();
+			nav.turnTo(0);
 			break;
 		case Button.ID_RIGHT:
-//			try { Thread.sleep(1000); } catch(Exception e){}
-			colour = Colour.GREEN;
-			lsPoller.start();
+			try { Thread.sleep(1000); } catch(Exception e){}
 			usPoller.start();
+			nav.setRotationSpeed(50);
+			nav.turnTo(179);
+			nav.turnTo(181);
+			nav.turnTo(0);
 			break;
 		case Button.ID_ENTER:
-//			try { Thread.sleep(1000); } catch(Exception e){}
-			colour = Colour.BLUE;
-			lsPoller.start();
+			try { Thread.sleep(1000); } catch(Exception e){}
 			usPoller.start();
-			objectDetection.start();
+			nav.setForward();
+			nav.setForwardSpeed(75);
+			nav.travelTo(0, 91.44);
 			break;
 		case Button.ID_ESCAPE:
 //			try { Thread.sleep(1000); } catch(Exception e){}
@@ -89,8 +88,9 @@ public class Lab5Detection {
 		System.exit(0);
 
 	}
-	
-	public static Colour getColour(){
-		return colour;
+
+	private static void initializeRConsole() {
+		RConsole.openUSB(20000);
+		RConsole.println("Connected");
 	}
 }

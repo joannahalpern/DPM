@@ -1,4 +1,10 @@
+package PartA_Detection;
 
+
+import Lab5.BlockType;
+import Lab5.LightPoller;
+import Lab5.Odometer;
+import Lab5.UltrasonicPoller;
 import lejos.nxt.LCD;
 import lejos.util.Timer;
 import lejos.util.TimerListener;
@@ -42,7 +48,7 @@ public class LCDObjectDetection implements TimerListener{
 //		LCD.drawString("Mean Colour= " + lightPoller.getMean(), 0, 1);
 //		LCD.drawString("Mean Dis = " + usPoller.getMean(), 0, 1);
 //		LCD.drawString("Median C = " + lightPoller.getMedian(), 0, 2);
-		LCD.drawString("Median D = " + usPoller.getMedian(), 0, 2);
+		LCD.drawString("Median D = " + usPoller.getMedianDistance(), 0, 2);
 
 		
 		LCD.drawString("Colour = " + lightPoller.getColourVal(), 0, 3);
