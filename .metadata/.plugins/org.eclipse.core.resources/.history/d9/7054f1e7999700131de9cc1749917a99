@@ -1,17 +1,9 @@
-package PartA_Detection;
 
 
-import Lab5.Colour;
-import Lab5.LightPoller;
-import Lab5.Navigation;
-import Lab5.Odometer;
-import Lab5.TwoWheeledRobot;
-import Lab5.USLocalizer;
-import Lab5.UltrasonicPoller;
-import Lab5.USLocalizer.LocalizationType;
+import Detection.LCDObjectDetection;
 import lejos.nxt.*;
 
-public class Lab5_PartA_Detection {
+public class Lab5Detection {
 	public static int myMutex = 0; //global variable
 	
 	/* Create an object that can be used for synchronization across threads. */
@@ -44,11 +36,12 @@ public class Lab5_PartA_Detection {
 		
 		Navigation nav = new Navigation(odo);
 		
-		UltrasonicPoller usPoller = new UltrasonicPoller(us);
-		USLocalizer usLocalizer = new USLocalizer(odo, us, USLocalizer.LocalizationType.FALLING_EDGE, nav, usPoller);
+		USLocalizer usLocalizer = new USLocalizer(odo, us, USLocalizer.LocalizationType.FALLING_EDGE, nav);
+		UltrasonicPoller usPoller = new UltrasonicPoller(us, usLocalizer);
 
 		// perform the light sensor localization
-		LightPoller lsPoller = new LightPoller( ls, nav, Colour.BLUE);
+		LightLocalizer lsl = new LightLocalizer(odo, marshmallow, ls, nav);
+		LightPoller lsPoller = new LightPoller( ls, lsl, nav);
 		
 		ObjectDetection objectDetection = new ObjectDetection(usPoller, lsPoller, nav);
 
@@ -60,23 +53,26 @@ public class Lab5_PartA_Detection {
 		
 		switch(option) {
 		case Button.ID_LEFT:
-			lsPoller.setFloodLight(Colour.RED);
+			colour = Colour.RED;
 			lsPoller.start();
 			usPoller.start();
 			break;
 		case Button.ID_RIGHT:
-			lsPoller.setFloodLight(Colour.GREEN);
+//			try { Thread.sleep(1000); } catch(Exception e){}
+			colour = Colour.GREEN;
 			lsPoller.start();
 			usPoller.start();
 			break;
 		case Button.ID_ENTER:
-			lsPoller.setFloodLight(Colour.BLUE);
+//			try { Thread.sleep(1000); } catch(Exception e){}
+			colour = Colour.BLUE;
 			lsPoller.start();
 			usPoller.start();
 			objectDetection.start();
 			break;
 		case Button.ID_ESCAPE:
-			lsPoller.setFloodLight(Colour.OFF);
+//			try { Thread.sleep(1000); } catch(Exception e){}
+			colour = Colour.OFF;
 			lsPoller.start();
 			usPoller.start();
 			break;

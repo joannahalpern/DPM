@@ -1,0 +1,91 @@
+/*
+ * Lab4- Group 53 - LightPoller
+ * Harris Miller - 260499543
+ * Joanna Halpern - 260410826
+ */
+
+import java.util.Iterator;
+import java.util.Queue;
+
+import lejos.nxt.ColorSensor;
+
+
+public class LightPoller extends Thread{
+	private static final int QUEUE_SIZE = 5;
+	private ColorSensor ls;
+	private LightLocalizer lsLocalizer;
+	private Navigation nav;
+	private double colourVal = 99999;
+	private Lab5.Colour colour;
+	private Queue<Double> coloursQueue;
+	
+	
+
+	
+	public LightPoller(ColorSensor ls, LightLocalizer lsLocalizer, Navigation nav) {
+		this.ls = ls;
+		this.lsLocalizer = lsLocalizer;
+		this.nav = nav;
+		this.colour = Lab5.colour;
+		initializeQueue();
+	}
+	
+	public void run() {
+		setFloodLight(Lab5.colour);
+		while(true){//sleep every half second until myMutex (permission variable) goes to 1
+			colourVal = ls.getRawLightValue();
+			coloursQueue.push(colourVal);
+			coloursQueue.pop();
+			try { Thread.sleep(50); } catch(Exception e){}
+			}
+		}
+
+	private void setFloodLight(Lab5.Colour colour) {
+		ls.setFloodlight(true);
+		switch (colour){
+			case RED:
+				ls.setFloodlight(false);
+				ls.setFloodlight(ColorSensor.Color.RED);
+				break;
+				
+			case GREEN:
+				ls.setFloodlight(false);
+				ls.setFloodlight(ColorSensor.Color.GREEN);
+				break;
+				
+			case BLUE:
+				ls.setFloodlight(ColorSensor.Color.BLUE);
+				break;
+			
+			default:
+				ls.setFloodlight(false);
+				break;
+		}
+	}
+
+	public double getColourVal() {
+		return colourVal;
+	}
+
+	//initialize queue with 5 values
+	private void initializeQueue() {
+		coloursQueue = new Queue<Double>();
+		for (int i = 0; i<QUEUE_SIZE; i++){
+			coloursQueue.addElement(9999.9);
+		}
+	}
+	
+	public double getMean(){
+		Double sum = 0.0;
+		
+		for (int i = 0; i<QUEUE_SIZE; i++){
+			sum = sum + ((Double) coloursQueue.pop());
+		}
+		double mean = (double) (sum/QUEUE_SIZE);
+		
+		return mean;
+	}
+	
+	
+
+}

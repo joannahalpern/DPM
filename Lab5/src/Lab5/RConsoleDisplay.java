@@ -13,18 +13,16 @@ public class RConsoleDisplay implements TimerListener{
 	private Timer lcdTimer;
 	private LightPoller lightPoller;
 	private UltrasonicPoller usPoller;
-	private USLocalizer usl;
 
 	
 	// arrays for displaying data
 	private double [] pos;
 	
-	public RConsoleDisplay(Odometer odo, LightPoller lightPoller, UltrasonicPoller usPoller, USLocalizer usl) {
+	public RConsoleDisplay(Odometer odo, LightPoller lightPoller, UltrasonicPoller usPoller) {
 		this.odo = odo;
 		this.lcdTimer = new Timer(LCD_REFRESH, this);
 		this.lightPoller = lightPoller;
 		this.usPoller = usPoller;
-		this.usl = usl;
 
 		// start the timer
 		lcdTimer.start();

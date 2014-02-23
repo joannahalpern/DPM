@@ -1,0 +1,69 @@
+/*
+ * Lab5- Group 53 - Lab5
+ * Harris Miller - 260499543
+ * Joanna Halpern - 260410826
+ */
+
+import lejos.nxt.*;
+
+public class ObjectDetection extends Thread {
+	private static final double COLOUR_READING_THRESHOLD = 6;
+	private static final double DETECTION_THRESHOLD = 15; //TODO set the detection range
+
+	public static enum Colour{
+		RED, BLUE, GREEN, OFF
+	}
+	
+	public static enum BlockType{
+		STYROFOAM, WOOD, UNKNOWN
+	}
+	
+	public void run() {
+		while(true){
+			if (isBlockinRange(usPoller, DETECTION_THRESHOLD)){
+				//display "Object Detected" on LCD
+
+				//check to see block is close enough to read colour. If not, then move forward.
+				while (!isBlockinRange(usPoller, threshold)){
+					//move forward
+				}
+				BlockType blockType = identifyBlock(lsPoller);
+				switch (blockType){
+					case STYROFOAM:
+						//display "Block" on LCD
+					case WOOD:
+						//display "Not Block" on LCD
+					case UNKNOWN:
+						//display "Not Block" on LCD
+					default:
+						//display "Not Block" on LCD
+				}
+			try { Thread.sleep(50); } catch(Exception e){}
+		}
+	}
+		
+	}
+
+	public boolean isBlockinRange(UltrasonicPoller usPoller, double threshold){
+		double distance = usPoller.getDistance();
+		if (distance< threshold){
+			return true;
+		}
+		return false;
+	}
+	
+	public BlockType identifyBlock(LightPoller lsPoller){
+		try { Thread.sleep(lsPoller); } catch(Exception e){}
+		double colourVal = lsPoller.getColourVal();
+		//TODO try lsPoller.getMedian() and lsPoller.getMean()
+		BlockType blockType = BlockType.UNKNOWN;
+		
+		if (LOWER_FOAM_LIMIT < colourVal && UPPER_FOAM_LIMIT){
+			blockType = BlockType.STYROFOAM;
+		}
+		else if 
+		
+		return blockType;
+	}
+
+}

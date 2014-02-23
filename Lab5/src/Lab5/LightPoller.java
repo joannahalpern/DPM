@@ -2,8 +2,7 @@ package Lab5;
 
 
 import java.util.Queue;
-
-import PartA_Detection.Lab5_PartA_Detection;
+import PartA_Detection.Lab5_PartA;
 import lejos.nxt.ColorSensor;
 
 
@@ -26,7 +25,7 @@ public class LightPoller extends Thread{
 		
 		initializeQueue();
 	}
-	
+
 	public void run() {
 		setFloodLight(colour);
 		while(true){//sleep every twentieth second until myMutex (permission variable) goes to 1
