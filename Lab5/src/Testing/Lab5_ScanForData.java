@@ -1,6 +1,16 @@
-package Lab5;
+package Testing;
 
 
+import Lab5.Colour;
+import Lab5.LightPoller;
+import Lab5.Navigation;
+import Lab5.NavigationOur;
+import Lab5.Odometer;
+import Lab5.RConsoleDisplay;
+import Lab5.TwoWheeledRobot;
+import Lab5.USLocalizer;
+import Lab5.UltrasonicPoller;
+import Lab5.USLocalizer.LocalizationType;
 import lejos.nxt.*;
 import lejos.nxt.comm.RConsole;
 
@@ -35,9 +45,10 @@ public class Lab5_ScanForData {
 		ColorSensor ls = new ColorSensor(SensorPort.S1);
 		
 		Navigation nav = new Navigation(odo);
+		NavigationOur ourNav = new NavigationOur(odo);
 		
 		UltrasonicPoller usPoller = new UltrasonicPoller(us);
-		USLocalizer usLocalizer = new USLocalizer(odo, us, USLocalizer.LocalizationType.RISING_EDGE, nav, usPoller);
+		USLocalizer usLocalizer = new USLocalizer(odo, us, USLocalizer.LocalizationType.RISING_EDGE, ourNav, usPoller);
 
 		// perform the light sensor localization
 		LightPoller lsPoller = new LightPoller( ls, nav, Colour.BLUE);
@@ -55,22 +66,22 @@ public class Lab5_ScanForData {
 			try { Thread.sleep(1000); } catch(Exception e){}
 			usPoller.start();
 			usLocalizer.doLocalization();
-			nav.turnTo(0);
+			ourNav.turnTo(0);
 			break;
 		case Button.ID_RIGHT:
 			try { Thread.sleep(1000); } catch(Exception e){}
 			usPoller.start();
-			nav.setRotationSpeed(50);
-			nav.turnTo(179);
-			nav.turnTo(181);
-			nav.turnTo(0);
+			ourNav.setRotationSpeed(50);
+			ourNav.turnTo(179);
+			ourNav.turnTo(181);
+			ourNav.turnTo(0);
 			break;
 		case Button.ID_ENTER:
 			try { Thread.sleep(1000); } catch(Exception e){}
 			usPoller.start();
-			nav.setForward();
-			nav.setForwardSpeed(75);
-			nav.travelTo(0, 91.44);
+			ourNav.setForward();
+			ourNav.setForwardSpeed(75);
+			ourNav.travelTo(0, 91.44);
 			break;
 		case Button.ID_ESCAPE:
 //			try { Thread.sleep(1000); } catch(Exception e){}

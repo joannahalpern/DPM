@@ -1,11 +1,14 @@
-package PartA_Detection;
+/*
+ * Lab4- Group 53 - Lab4
+ * Harris Miller - 260499543
+ * Joanna Halpern - 260410826
+ */
 
-
-import Lab5.*;
 import lejos.nxt.*;
 
-public class Lab5_PartA {
+public class Lab5 {
 	public static int myMutex = 0; //global variable
+	public static int counter = 0;
 	
 	/* Create an object that can be used for synchronization across threads. */
 
@@ -13,8 +16,11 @@ public class Lab5_PartA {
 	}
 
 	static public theLock lock = new theLock();
-
-	private static Colour colour = Colour.OFF;
+	
+	public static enum Colour{
+		RED, BLUE, GREEN, OFF
+	}
+	public static Colour colour = Colour.OFF;
 	
 	public static void main(String[] args) {
 		
@@ -36,41 +42,46 @@ public class Lab5_PartA {
 		ColorSensor ls = new ColorSensor(SensorPort.S1);
 		
 		Navigation nav = new Navigation(odo);
-		NavigationOur ourNav = new NavigationOur(odo);
 		
-		UltrasonicPoller usPoller = new UltrasonicPoller(us);
-		USLocalizer usLocalizer = new USLocalizer(odo, us, USLocalizer.LocalizationType.FALLING_EDGE, ourNav, usPoller);
+		USLocalizer usLocalizer = new USLocalizer(odo, us, USLocalizer.LocalizationType.FALLING_EDGE, nav);
+		UltrasonicPoller usPoller = new UltrasonicPoller(us, usLocalizer);
 
 		// perform the light sensor localization
-		LightPoller lsPoller = new LightPoller( ls, nav, Colour.BLUE);
+		LightLocalizer lsl = new LightLocalizer(odo, marshmallow, ls, nav);
+		LightPoller lsPoller = new LightPoller( ls, lsl, nav);
 		
-		ObjectDetection objectDetection = new ObjectDetection(usPoller, lsPoller, nav);
 
 		int option = 0;
 		while (option == 0)
 			option = Button.waitForAnyPress();
 			
-		LCDObjectDetection lcd = new LCDObjectDetection(odo, lsPoller, usPoller, objectDetection);
+		LCDInfo lcd = new LCDInfo(odo, lsPoller, usPoller);
 		
 		switch(option) {
 		case Button.ID_LEFT:
-			lsPoller.setFloodLight(Colour.RED);
+//			try { Thread.sleep(1000); } catch(Exception e){}
+//				counter++;
+//				counter = counter%4;
+//				colour = chooseColour(counter);
+			colour = Colour.RED;
 			lsPoller.start();
 			usPoller.start();
 			break;
 		case Button.ID_RIGHT:
-			lsPoller.setFloodLight(Colour.GREEN);
+//			try { Thread.sleep(1000); } catch(Exception e){}
+			colour = Colour.GREEN;
 			lsPoller.start();
 			usPoller.start();
 			break;
 		case Button.ID_ENTER:
-			lsPoller.setFloodLight(Colour.BLUE);
+//			try { Thread.sleep(1000); } catch(Exception e){}
+			colour = Colour.BLUE;
 			lsPoller.start();
 			usPoller.start();
-			objectDetection.start();
 			break;
 		case Button.ID_ESCAPE:
-			lsPoller.setFloodLight(Colour.OFF);
+//			try { Thread.sleep(1000); } catch(Exception e){}
+			colour = Colour.OFF;
 			lsPoller.start();
 			usPoller.start();
 			break;
@@ -84,8 +95,25 @@ public class Lab5_PartA {
 		System.exit(0);
 
 	}
+
+	public static int getCounter() {
+		return counter;
+	}
 	
-	public static Colour getColour(){
+	public static Colour chooseColour(int counter){
+		Colour colour;
+		if (counter == 0){
+			colour = Colour.RED;
+		}
+		else if(counter == 1){
+			colour = Colour.GREEN;
+		}
+		else if(counter == 2){
+			colour = Colour.BLUE;
+		}
+		else{
+			colour = Colour.OFF;
+		}
 		return colour;
 	}
 }

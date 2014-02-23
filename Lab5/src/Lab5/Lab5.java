@@ -1,7 +1,6 @@
 package Lab5;
 
 import java.util.Stack;
-
 import lejos.nxt.Button;
 import lejos.nxt.ColorSensor;
 import lejos.nxt.LCD;
@@ -10,10 +9,15 @@ import lejos.nxt.SensorPort;
 import lejos.nxt.UltrasonicSensor;
 import lejos.nxt.comm.RConsole;
 import lejos.nxt.*;
+import lejos.geom.Point;
+import PartA_Detection.*;
 
 public class Lab5 {
-	public static Stack<?> stack = new Stack(); //Add element type
-	public static int myMutex = 0; //global variable
+	public static Stack<Point> stack = new Stack<Point>(); //Add element type
+	public static boolean navigate = true; //global variable
+	public static boolean identifyingBlock = false;
+	public static boolean foamBlockFound = false;
+	public static Point blockPoint = new Point(0, 0);
 	/* Create an object that can be used for synchronization across threads. */
 	static class theLock extends Object {//this is a lock
 	}
@@ -34,15 +38,17 @@ public class Lab5 {
 		TouchSensor ts = new TouchSensor(SensorPort.S3);
 		
 		Navigation nav = new Navigation(odo);
+		NavigationOur ourNav = new NavigationOur(odo);
 		
 		UltrasonicPoller usPoller = new UltrasonicPoller(us);
 
 		// perform the light sensor localization
 		LightPoller lsPoller = new LightPoller( ls, nav, Colour.BLUE);
 		
-		LocalizationAtOrigin localizer = new LocalizationAtOrigin(odo, nav, usPoller, lsPoller);
+		USLocalizer localizer = new USLocalizer(odo, us, USLocalizer.LocalizationType.RISING_EDGE, ourNav, usPoller);
 		FollowPathAndScan followPathAndScan = new FollowPathAndScan(nav, odo, usPoller, lsPoller);
-
+		ObjectDetection objectDetection = new ObjectDetection(usPoller, lsPoller, nav);
+		
 		initializeRConsole();
 		RConsoleDisplay rcd = new RConsoleDisplay(odo, lsPoller, usPoller);
 //		LCDInfo lcd = new LCDInfo(odo, lsPoller, usPoller, usLocalizer);
@@ -56,14 +62,27 @@ public class Lab5 {
 			try { Thread.sleep(1000); } catch(Exception e){}
 			usPoller.start(); //TODO: change pollers to implement TimerListenner. Have them start in their constructors
 			lsPoller.start();
-			localizer.localizeFromOrigin();
-		
+			odo.setPosition(new double[]{30.48, 30.48, 0}, new boolean[]{true, true, true}); //set odometer to start at first square's corner
+			localizer.doLocalization();
+			
 			followPathAndScan.start();
 			
-			
-			
-			
-			
+			while (stack.empty() && (!foamBlockFound)){
+				navigate = true;
+				while ( (!stack.empty()) && (!foamBlockFound) ){
+					navigate = false;
+					blockPoint = stack.pop();
+					Point currentPoint = new Point( (float) odo.getX(),(float) odo.getY());
+					double blockAngle = (double) currentPoint.angleTo(blockPoint);
+					nav.turnTo(blockAngle, true);
+					foamBlockFound = objectDetection.doBlockDetection();
+				}
+			}
+		//foamBlockFound will be true now
+			grabBlock();
+			//TODO: start object avoidance
+			nav.travelTo(105, 225);
+			dropBlock();
 			break;
 		default:
 			System.out.println("Error - invalid button");
@@ -74,6 +93,22 @@ public class Lab5 {
 		Button.waitForAnyPress();
 		System.exit(0);
 
+	}
+	
+	/**
+	 * claw releases block
+	 *
+	 *TODO: fil in dropBlock()
+	 */
+	private static void dropBlock() {
+	}
+
+	/**
+	 * The robot needs to turn around and grab the block with the claw
+	 * 
+	 * TODO: fill in grabBlock()
+	 */
+	private static void grabBlock() {
 	}
 
 	private static void initializeRConsole() {

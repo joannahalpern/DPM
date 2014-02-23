@@ -9,6 +9,7 @@ import Lab5.Colour;
 import Lab5.LCDInfo;
 import Lab5.LightPoller;
 import Lab5.Navigation;
+import Lab5.NavigationOur;
 import Lab5.Odometer;
 import Lab5.TwoWheeledRobot;
 import Lab5.USLocalizer;
@@ -46,9 +47,10 @@ public class ColourTestingExperiment {
 		ColorSensor ls = new ColorSensor(SensorPort.S1);
 		
 		Navigation nav = new Navigation(odo);
+		NavigationOur ourNav = new NavigationOur(odo);
 		
 		UltrasonicPoller usPoller = new UltrasonicPoller(us);
-		USLocalizer usLocalizer = new USLocalizer(odo, us, USLocalizer.LocalizationType.FALLING_EDGE, nav, usPoller);
+		USLocalizer usLocalizer = new USLocalizer(odo, us, USLocalizer.LocalizationType.FALLING_EDGE, ourNav, usPoller);
 
 		// perform the light sensor localization
 		LightPoller lsPoller = new LightPoller( ls, nav, Colour.BLUE);

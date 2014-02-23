@@ -3,16 +3,12 @@ package PartA_Detection;
 
 //
 //if block 
-
-import Lab5.BlockType;
-import Lab5.LightPoller;
-import Lab5.Navigation;
-import Lab5.UltrasonicPoller;
+import Lab5.*;
 import lejos.nxt.*;
 
 public class ObjectDetection extends Thread {
 	private static final double COLOUR_READING_THRESHOLD = 9;
-	private static final double DETECTION_THRESHOLD = 15; //TODO set the detection range
+	private static final double DETECTION_THRESHOLD = 30; //TODO set the detection range
 	private static final double LOWER_FOAM_LIMIT = 380; //TODO set colour thresholds
 	private static final double UPPER_FOAM_LIMIT = 540;
 	private static final double LOWER_WOOD_LIMIT = 230;
@@ -36,15 +32,21 @@ public class ObjectDetection extends Thread {
 	
 	public void run() {
 		while(true){
+			doBlockDetection();
+			try { Thread.sleep(100); } catch(Exception e){}
+			objectDetected = false;
+		}
+	}
+	
+	public boolean doBlockDetection(){
 			if (isBlockinRange(usPoller, DETECTION_THRESHOLD)){
 				objectDetected = true; //LCD will now display "Object Detected"
 
 				//check to see block is close enough to read colour. If not, then move forward.
 				while (!isBlockinRange(usPoller, COLOUR_READING_THRESHOLD)){
-					nav.setForward();
-					nav.go(50);
+					nav.setSpeeds(50, 50); //TODO: changed nav so need to retest that this works
 				}
-				nav.go(0);//stop
+				nav.setSpeeds(0, 0);//stop
 				blockType = identifyBlock(lsPoller);
 				switch (blockType){
 					case STYROFOAM:
@@ -60,11 +62,8 @@ public class ObjectDetection extends Thread {
 						block = false;
 						break;
 				}
-			try { Thread.sleep(50); } catch(Exception e){}
-		}
-			objectDetected = false;
-	}
-		
+			}
+			return block;
 	}
 
 	public boolean isBlockinRange(UltrasonicPoller usPoller, double threshold){
