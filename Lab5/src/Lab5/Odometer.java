@@ -120,7 +120,6 @@ public class Odometer implements TimerListener {
 	}
 
 	public double getAng() {
-		// TODO Auto-generated method stub
 		return theta;
 	}
 }

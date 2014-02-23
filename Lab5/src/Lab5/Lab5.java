@@ -1,3 +1,10 @@
+/*
+ * The main things we need to do are:
+ * 		- Fill in FollowPathAnd
+ * 		- Fill in grabBlock()
+ * 		- Fill in dropBlock();
+ * 		- create ObjectAvoidance
+ */
 package Lab5;
 
 import java.util.Stack;

@@ -76,8 +76,7 @@ public class ObjectDetection extends Thread {
 	
 	public BlockType identifyBlock(LightPoller lsPoller){
 		try { Thread.sleep(lsPoller.POLLING_PERIOD*5); } catch(Exception e){}
-		double colourVal = lsPoller.getColourVal();
-		//TODO try lsPoller.getMedian() and lsPoller.getMean()
+		double colourVal = lsPoller.getMedian();
 		BlockType blockType;
 		
 		if ((LOWER_FOAM_LIMIT < colourVal) && (colourVal < UPPER_FOAM_LIMIT)){

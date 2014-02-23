@@ -77,7 +77,7 @@ public class USLocalizer {
 			//Using the 2 latched angles, it calculates what it's current angle must be and puts that between 0 and 360 degrees
 			double currentAngle = fixDegAngle(-calculateChangeAngleToZero(angleA, angleB, locType));
 			
-			odo.setPosition(new double [] {0.0, 0.0, currentAngle}, new boolean [] {true, true, true});
+			odo.setPosition(new double [] {0.0, 0.0, currentAngle}, new boolean [] {false, false, true});
 		} 
 		else{//Case: RISING EDGE
 			nav.setClockwise();

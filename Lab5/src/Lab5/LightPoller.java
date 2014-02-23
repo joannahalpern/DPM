@@ -88,7 +88,6 @@ public class LightPoller extends Thread{
 		return mean;
 	}
 	
-	//TODO not yet tested
 	/**
 	 * computes median of all the values in the coloursQueue
 	 * by putting queue into array, sorting the array with QuickSort,

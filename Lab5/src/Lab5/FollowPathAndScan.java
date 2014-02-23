@@ -11,6 +11,8 @@ import lejos.geom.Point;
  * It should also start obstacle avoidance
  *
  *This should only execute when Lab5.navigate == true. Else, sleep.
+ *
+ *TODO: Fill in FollowPathAndScan
  */
 public class FollowPathAndScan extends Thread{
 	Navigation nav;
