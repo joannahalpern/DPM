@@ -39,7 +39,8 @@ public class Lab5_PartA {
 		NavigationOur ourNav = new NavigationOur(odo);
 		
 		UltrasonicPoller usPoller = new UltrasonicPoller(us);
-		USLocalizer usLocalizer = new USLocalizer(odo, us, USLocalizer.LocalizationType.FALLING_EDGE, ourNav, usPoller);
+		ObstacleAvoidance avoider = new ObstacleAvoidance(nav, usPoller);
+		USLocalizer usLocalizer = new USLocalizer(odo, USLocalizer.LocalizationType.FALLING_EDGE, ourNav, usPoller);
 
 		// perform the light sensor localization
 		LightPoller lsPoller = new LightPoller( ls, nav, Colour.BLUE);

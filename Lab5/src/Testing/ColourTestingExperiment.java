@@ -50,7 +50,7 @@ public class ColourTestingExperiment {
 		NavigationOur ourNav = new NavigationOur(odo);
 		
 		UltrasonicPoller usPoller = new UltrasonicPoller(us);
-		USLocalizer usLocalizer = new USLocalizer(odo, us, USLocalizer.LocalizationType.FALLING_EDGE, ourNav, usPoller);
+		USLocalizer usLocalizer = new USLocalizer(odo, USLocalizer.LocalizationType.FALLING_EDGE, ourNav, usPoller);
 
 		// perform the light sensor localization
 		LightPoller lsPoller = new LightPoller( ls, nav, Colour.BLUE);
