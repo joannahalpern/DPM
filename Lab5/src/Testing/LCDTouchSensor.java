@@ -12,14 +12,14 @@ public class LCDTouchSensor implements TimerListener{
 	private LightPoller lightPoller;
 	private UltrasonicPoller usPoller;
 	private USLocalizer usl;
-	private TouchPoller tPoller;
+//	private TouchPoller tPoller;
 
-	public LCDTouchSensor(Odometer odo, LightPoller lightPoller, UltrasonicPoller usPoller, TouchPoller tPoller) {
+	public LCDTouchSensor(Odometer odo, LightPoller lightPoller, UltrasonicPoller usPoller/*, TouchPoller tPoller*/) {
 		this.odo = odo;
 		this.lcdTimer = new Timer(LCD_REFRESH, this);
 		this.lightPoller = lightPoller;
 		this.usPoller = usPoller;
-		this.tPoller = tPoller;
+//		this.tPoller = tPoller;
 		
 		// start the timer
 		lcdTimer.start();
@@ -28,7 +28,7 @@ public class LCDTouchSensor implements TimerListener{
 	public void timedOut() { 
 		LCD.clear();
 
-		LCD.drawString("Touch = " + tPoller.isTouching(), 0, 2);
+//		LCD.drawString("Touch = " + tPoller.isTouching(), 0, 2);
 		LCD.drawString("Distance = " + usPoller.getDistance(), 0, 4);
 		LCD.drawString("Colour = " + lightPoller.getColourVal(), 0, 5);
 

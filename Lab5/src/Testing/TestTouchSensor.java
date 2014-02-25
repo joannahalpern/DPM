@@ -8,7 +8,6 @@ import lejos.nxt.Motor;
 import lejos.nxt.SensorPort;
 import lejos.nxt.UltrasonicSensor;
 import lejos.nxt.comm.RConsole;
-import lejos.nxt.*;
 
 public class TestTouchSensor {
 
@@ -20,17 +19,15 @@ public class TestTouchSensor {
 		LCD.drawString("    to begin    ", 0, 3);
 		
 		// setup the odometer, display, and ultrasonic and light sensors
-		TwoWheeledRobot fuzzyPinkRobot = new TwoWheeledRobot(Motor.A, Motor.B);
+		TwoWheeledRobot fuzzyPinkRobot = new TwoWheeledRobot(Motor.A, Motor.B, Motor.C);
 		Odometer odo = new Odometer(fuzzyPinkRobot, true);
 		UltrasonicSensor us = new UltrasonicSensor(SensorPort.S2);
 		ColorSensor ls = new ColorSensor(SensorPort.S1);
-		TouchSensor ts = new TouchSensor(SensorPort.S3);
-		
-		Navigation nav = new Navigation(odo);
+//		TouchSensor ts = new TouchSensor(SensorPort.S3);
 		
 		UltrasonicPoller usPoller = new UltrasonicPoller(us);
-		LightPoller lsPoller = new LightPoller(ls, nav, Colour.BLUE);
-		TouchPoller tPoller = new TouchPoller(ts);
+		LightPoller lsPoller = new LightPoller(ls, Colour.BLUE);
+//		TouchPoller tPoller = new TouchPoller(ts);
 
 //		initializeRConsole();
 //		RConsoleDisplay rcd = new RConsoleDisplay(odo, lsPoller, usPoller);
@@ -39,14 +36,14 @@ public class TestTouchSensor {
 		while (option == 0)
 			option = Button.waitForAnyPress();
 			
-		LCDTouchSensor lcd = new LCDTouchSensor(odo, lsPoller, usPoller, tPoller);
+		LCDTouchSensor lcd = new LCDTouchSensor(odo, lsPoller, usPoller/*, tPoller*/);
 
 		switch(option) {
 		case Button.ID_LEFT:
 			try { Thread.sleep(1000); } catch(Exception e){}
 			lsPoller.start();
 			usPoller.start();
-			tPoller.start();
+//			tPoller.start();
 			break;
 		default:
 			System.out.println("Error - invalid button");
