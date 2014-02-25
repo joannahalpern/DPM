@@ -1,9 +1,9 @@
 /*
  * The main things we need to do are:
- * 		- Fill in FollowPathAnd
+ * 		- test FollowPathAnd
  * 		- Fill in grabBlock()
  * 		- Fill in dropBlock();
- * 		- create ObjectAvoidance
+ * 		- test ObjectAvoidance
  */
 package Lab5;
 
@@ -20,7 +20,7 @@ import lejos.geom.Point;
 import PartA_Detection.*;
 
 public class Lab5 {
-	public static Stack<Point> stack = new Stack<Point>(); //Add element type
+	public static Stack<Point> blockStack = new Stack<Point>(); //Add element type
 	public static boolean navigate = true; //global variable
 	public static boolean identifyingBlock = false;
 	public static boolean foamBlockFound = false;
@@ -50,7 +50,7 @@ public class Lab5 {
 		UltrasonicPoller usPoller = new UltrasonicPoller(us);
 		LightPoller lsPoller = new LightPoller(ls, nav, Colour.BLUE);
 		
-		ObstacleAvoidance avoider = new ObstacleAvoidance(nav, usPoller);
+		ObstacleAvoidance avoider = new ObstacleAvoidance(nav, usPoller, odo);
 		
 		USLocalizer localizer = new USLocalizer(odo, USLocalizer.LocalizationType.RISING_EDGE, ourNav, usPoller);
 		FollowPathAndScan followPathAndScan = new FollowPathAndScan(nav, odo, usPoller, lsPoller, avoider);
@@ -72,13 +72,14 @@ public class Lab5 {
 			odo.setPosition(new double[]{30.48, 30.48, 0}, new boolean[]{true, true, true}); //set odometer to start at first square's corner
 			localizer.doLocalization();
 			
+			avoider.start();
 			followPathAndScan.start();
 			
-			while (stack.empty() && (!foamBlockFound)){
+			while (blockStack.empty() && (!foamBlockFound)){
 				navigate = true;
-				while ( (!stack.empty()) && (!foamBlockFound) ){
+				while ( (!blockStack.empty()) && (!foamBlockFound) ){
 					navigate = false;
-					blockPoint = stack.pop();
+					blockPoint = blockStack.pop();
 					Point currentPoint = new Point( (float) odo.getX(),(float) odo.getY());
 					double blockAngle = (double) currentPoint.angleTo(blockPoint);
 					nav.turnTo(blockAngle, true);
@@ -87,8 +88,8 @@ public class Lab5 {
 			}
 		//foamBlockFound will be true now
 			grabBlock();
-			//TODO: start object avoidance
-			nav.travelTo(105, 225);
+
+			nav.travelTo(106.68, 228.6);
 			dropBlock();
 			break;
 		default:
@@ -105,7 +106,7 @@ public class Lab5 {
 	/**
 	 * claw releases block
 	 *
-	 *TODO: fil in dropBlock()
+	 *TODO: fill in dropBlock()
 	 */
 	private static void dropBlock() {
 	}

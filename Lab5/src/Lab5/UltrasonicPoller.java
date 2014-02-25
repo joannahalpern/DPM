@@ -8,7 +8,8 @@ import lejos.nxt.UltrasonicSensor;
 //This code is what was given in lab 1 except that we added myMutex
 public class UltrasonicPoller extends Thread{
 	public static final int QUEUE_SIZE = 5;
-	private static final long POLLING_PERIOD = 28;
+	public static final long POLLING_PERIOD = 28;
+	public static final double SENSOR_OFFSET = 1; //TODO measure sensor offset
 	private UltrasonicSensor us;
 	private USLocalizer uSLocalizer;
 	private double distance = 99999;
@@ -22,7 +23,7 @@ public class UltrasonicPoller extends Thread{
 	
 	public void run() {
 		while(true){
-			distance = us.getDistance();
+			distance = us.getDistance() + SENSOR_OFFSET;
 			putDistanceInQueue(distance);
 		
 			try { Thread.sleep(POLLING_PERIOD); } catch(Exception e){}

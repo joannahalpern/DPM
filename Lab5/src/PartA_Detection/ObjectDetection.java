@@ -67,7 +67,7 @@ public class ObjectDetection extends Thread {
 	}
 
 	public boolean isBlockinRange(UltrasonicPoller usPoller, double threshold){
-		double distance = usPoller.getMeanDistance();
+		double distance = usPoller.getMeanDistance(); //TODO: change to median but test it first
 		if (distance< threshold){
 			return true;
 		}

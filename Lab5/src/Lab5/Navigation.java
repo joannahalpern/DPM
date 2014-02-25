@@ -25,7 +25,7 @@ public class Navigation{
 			motor.setAcceleration(1000);
 		}
 	}
-	/*
+	/**
 	 * Functions to set the motor speeds jointly
 	 */
 	public void setSpeeds(float lSpd, float rSpd) {
@@ -54,7 +54,7 @@ public class Navigation{
 			this.rightMotor.forward();
 	}
 
-	/*
+	/**
 	 * Float the two motors jointly
 	 */
 	public void setFloat() {
@@ -64,7 +64,7 @@ public class Navigation{
 		this.rightMotor.flt(true);
 	}
 
-	/*
+	/**
 	 * TravelTo function which takes as arguments the x and y position in cm Will travel to designated position, while
 	 * constantly updating it's heading
 	 */
@@ -80,7 +80,7 @@ public class Navigation{
 		this.setSpeeds(0, 0);
 	}
 
-	/*
+	/**
 	 * TurnTo function which takes an angle and boolean as arguments The boolean controls whether or not to stop the
 	 * motors when the turn is completed
 	 */
@@ -108,7 +108,7 @@ public class Navigation{
 		}
 	}
 	
-	/*
+	/**
 	 * Go forward a set distance in cm
 	 */
 	public void goForward(double distance) {

@@ -26,10 +26,10 @@ public class RConsoleDisplay implements TimerListener{
 
 		// start the timer
 		lcdTimer.start();
-		RConsole.println("Y Position  |  Median Distance |  Mean Distance |  Distance");
+		RConsole.println("Angle  |  Median Distance |  Raw Distance");
 	}
 	
 	public void timedOut() { 
-		RConsole.println(odo.getY() + ", " + usPoller.getMedianDistance() + ", " + usPoller.getMeanDistance() + ", " + usPoller.getDistance());
+		RConsole.println(odo.getAng() + ", " + usPoller.getMedianDistance() + ", " + usPoller.getDistance());
 	}
 }

@@ -1,6 +1,8 @@
 package Lab5;
 
+import java.util.Queue;
 import java.util.Stack;
+
 import lejos.geom.Point;
 
 /**
@@ -14,7 +16,7 @@ import lejos.geom.Point;
  *
  *This should only execute while Lab5.navigate == true. Else, sleep.
  *
- *TODO: Fill in FollowPathAndScan
+ *TODO: Test FollowPathAndScan
  */
 public class FollowPathAndScan extends Thread{
 	Navigation nav;
@@ -22,6 +24,9 @@ public class FollowPathAndScan extends Thread{
 	UltrasonicPoller usPoller;
 	LightPoller lsPoller;
 	ObstacleAvoidance avoider;
+	Queue<Coordinate> navQueue;
+	Coordinate nextPoint = new Coordinate(0, 0);
+	public static boolean usScanning = false;
 
 
 	public FollowPathAndScan(Navigation nav, Odometer odo,
@@ -31,14 +36,73 @@ public class FollowPathAndScan extends Thread{
 		this.usPoller = usPoller;
 		this.lsPoller = lsPoller;
 		this.avoider = avoider;
+		this.navQueue = new Queue<Coordinate>();
+		navQueue.addElement(new Coordinate(30.48, 152.4));
+		navQueue.addElement(new Coordinate(30.48, 213.36));
+		navQueue.addElement(new Coordinate(91.44, 213.36));
+		navQueue.addElement(new Coordinate(91.44, 152.4));
 	}
 	
 	public void run(){
-		
+		while (Lab5.navigate == true && (!navQueue.empty())){
+			
+			//travel to first point
+			Coordinate nextPoint = (Coordinate) navQueue.pop();
+			Lab5.obstacleAvoidance = true;
+			nav.travelTo(nextPoint.getX(), nextPoint.getY());
+			Lab5.obstacleAvoidance = false;
+			
+			//scan 180 and put detected blocks in queue
+			nav.turnTo(-90, true);
+			usScanning = true;
+			Queue<PolarCoordinate> distanceQueue = collectDistances();
+			nav.turnTo(90, true);
+			usScanning = false;
+			
+			Stack<Point> blockStack = calculateBlockCoords(distanceQueue);
+			updateLab5Stack(blockStack);
+
+			try { Thread.sleep(10); } catch(Exception e){} //TODO: test without this sleep
+		}
 	}
 	
-	private synchronized void updateStack(){
+	private Queue<PolarCoordinate> collectDistances(){
+		Queue<PolarCoordinate> distanceQueue = new Queue<PolarCoordinate>();
+		while (FollowPathAndScan.usScanning == true){
+			distanceQueue.push(new PolarCoordinate(usPoller.getMedianDistance(), odo.getAng()));
+		}
+		return distanceQueue;
+	}
+	
+	
+	/**
+	 * Analyzes data and determines coordinates of blocks. 
+	 * Look at changes in distances to see when block starts and ends
+	 * The derivative spike (see class notes)
+	 * 
+	 * TODO: Fill this in
+	 * @param distanceQueue
+	 */
+	private Stack<Point> calculateBlockCoords(Queue<PolarCoordinate> distanceQueue) {
+		Stack<Point> blockStack = new Stack<Point>();
 		
+//		Discrete Derivative - from notes
+//		d1 = 0
+//		for i = 2 to N
+//		    di = xi – xi+1
+
+		
+		return blockStack;
+	}
+
+	/**
+	 * Put all Coordinates in stack in Lab5. Need to convert to Points (or change Lab5 to coordinate)
+	 * @param blockQueue
+	 */
+	private synchronized void updateLab5Stack(Stack<Point> blockStack){
+		while (!blockStack.empty()){
+			Lab5.blockStack.push( blockStack.pop());
+		}
 	}
 	
 }
