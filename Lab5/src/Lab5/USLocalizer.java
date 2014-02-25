@@ -10,18 +10,16 @@ public class USLocalizer {
 	private NavigationOur nav;
 	private Odometer odo;
 	private TwoWheeledRobot robot;
-	private UltrasonicSensor us;
 	private LocalizationType locType;
 	private static double distance = 9999; //this is distance to the wall as seen by ultra sonic sensor
 										   //this value will change as soon as the sensor starts polling
 	private static double angleA, angleB;
 	private UltrasonicPoller usPoller;
 	
-	public USLocalizer(Odometer odo, UltrasonicSensor us, LocalizationType locType, NavigationOur nav, UltrasonicPoller usPoller) {
+	public USLocalizer(Odometer odo, LocalizationType locType, NavigationOur nav, UltrasonicPoller usPoller) {
 		this.nav = nav;
 		this.odo = odo;
 		this.robot = odo.getTwoWheeledRobot();
-		this.us = us;
 		this.locType = locType;
 		this.usPoller = usPoller;
 		
@@ -145,18 +143,6 @@ public class USLocalizer {
 		return distance;
 	}
 
-	/**
-	 * Returns distance seen by ultra sonic sensor.
-	 * If the read distance is greater than 50, it will just return 50
-	 */
-	private int getFilteredData() {
-		int distance = us.getDistance();
-
-		if (distance > 50){
-			distance = 50;
-		}
-		return distance;
-	}
 
 	/**
 	 * Calculates robot's current angle based on the two latched angles

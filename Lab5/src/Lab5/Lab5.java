@@ -24,6 +24,7 @@ public class Lab5 {
 	public static boolean navigate = true; //global variable
 	public static boolean identifyingBlock = false;
 	public static boolean foamBlockFound = false;
+	public static boolean obstacleAvoidance = false;
 	public static Point blockPoint = new Point(0, 0);
 	/* Create an object that can be used for synchronization across threads. */
 	static class theLock extends Object {//this is a lock
@@ -42,18 +43,17 @@ public class Lab5 {
 		Odometer odo = new Odometer(fuzzyPinkRobot, true);
 		UltrasonicSensor us = new UltrasonicSensor(SensorPort.S2);
 		ColorSensor ls = new ColorSensor(SensorPort.S1);
-		TouchSensor ts = new TouchSensor(SensorPort.S3);
 		
 		Navigation nav = new Navigation(odo);
 		NavigationOur ourNav = new NavigationOur(odo);
 		
 		UltrasonicPoller usPoller = new UltrasonicPoller(us);
-
-		// perform the light sensor localization
-		LightPoller lsPoller = new LightPoller( ls, nav, Colour.BLUE);
+		LightPoller lsPoller = new LightPoller(ls, nav, Colour.BLUE);
 		
-		USLocalizer localizer = new USLocalizer(odo, us, USLocalizer.LocalizationType.RISING_EDGE, ourNav, usPoller);
-		FollowPathAndScan followPathAndScan = new FollowPathAndScan(nav, odo, usPoller, lsPoller);
+		ObstacleAvoidance avoider = new ObstacleAvoidance(nav, usPoller);
+		
+		USLocalizer localizer = new USLocalizer(odo, USLocalizer.LocalizationType.RISING_EDGE, ourNav, usPoller);
+		FollowPathAndScan followPathAndScan = new FollowPathAndScan(nav, odo, usPoller, lsPoller, avoider);
 		ObjectDetection objectDetection = new ObjectDetection(usPoller, lsPoller, nav);
 		
 		initializeRConsole();
