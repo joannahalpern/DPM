@@ -6,28 +6,32 @@ public class TwoWheeledRobot {
 	public static final double DEFAULT_LEFT_RADIUS = 2.075;
 	public static final double DEFAULT_RIGHT_RADIUS = 2.075;
 	public static final double DEFAULT_WIDTH = 15.45;
-	private NXTRegulatedMotor leftMotor, rightMotor;
+	private NXTRegulatedMotor leftMotor, rightMotor, clawMotor;
 	private double leftRadius, rightRadius, width;
 	private double forwardSpeed, rotationSpeed;
 	
 	public TwoWheeledRobot(NXTRegulatedMotor leftMotor,
 						   NXTRegulatedMotor rightMotor,
+						   NXTRegulatedMotor clawMotor,
 						   double width,
 						   double leftRadius,
 						   double rightRadius) {
 		this.leftMotor = leftMotor;
 		this.rightMotor = rightMotor;
+		this.clawMotor = clawMotor;
 		this.leftRadius = leftRadius;
 		this.rightRadius = rightRadius;
 		this.width = width;
+		
+//		clawMotor.resetTachoCount();
 	}
 	
-	public TwoWheeledRobot(NXTRegulatedMotor leftMotor, NXTRegulatedMotor rightMotor) {
-		this(leftMotor, rightMotor, DEFAULT_WIDTH, DEFAULT_LEFT_RADIUS, DEFAULT_RIGHT_RADIUS);
+	public TwoWheeledRobot(NXTRegulatedMotor leftMotor, NXTRegulatedMotor rightMotor, NXTRegulatedMotor clawMotor) {
+		this(leftMotor, rightMotor, clawMotor, DEFAULT_WIDTH, DEFAULT_LEFT_RADIUS, DEFAULT_RIGHT_RADIUS);
 	}
 	
-	public TwoWheeledRobot(NXTRegulatedMotor leftMotor, NXTRegulatedMotor rightMotor, double width) {
-		this(leftMotor, rightMotor, width, DEFAULT_LEFT_RADIUS, DEFAULT_RIGHT_RADIUS);
+	public TwoWheeledRobot(NXTRegulatedMotor leftMotor, NXTRegulatedMotor rightMotor, NXTRegulatedMotor clawMotor, double width) {
+		this(leftMotor, rightMotor, clawMotor, width, DEFAULT_LEFT_RADIUS, DEFAULT_RIGHT_RADIUS);
 	}
 	
 	// accessors

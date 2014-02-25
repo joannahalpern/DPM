@@ -29,7 +29,7 @@ public class Lab5_PartA {
 
 		
 		// setup the odometer, display, and ultrasonic and light sensors
-		TwoWheeledRobot fuzzyPinkRobot = new TwoWheeledRobot(Motor.A, Motor.B);
+		TwoWheeledRobot fuzzyPinkRobot = new TwoWheeledRobot(Motor.A, Motor.B,Motor.C);
 		Odometer odo = new Odometer(fuzzyPinkRobot, true);
 		Odometer marshmallow = new Odometer(fuzzyPinkRobot, true);
 		UltrasonicSensor us = new UltrasonicSensor(SensorPort.S2);
@@ -43,7 +43,7 @@ public class Lab5_PartA {
 		USLocalizer usLocalizer = new USLocalizer(odo, USLocalizer.LocalizationType.FALLING_EDGE, ourNav, usPoller);
 
 		// perform the light sensor localization
-		LightPoller lsPoller = new LightPoller( ls, nav, Colour.BLUE);
+		LightPoller lsPoller = new LightPoller( ls, Colour.BLUE);
 		
 		ObjectDetection objectDetection = new ObjectDetection(usPoller, lsPoller, nav);
 

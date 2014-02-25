@@ -10,7 +10,6 @@ public class LightPoller extends Thread{
 	public static final int QUEUE_SIZE = 9;
 	public static final long POLLING_PERIOD = 50; // (1 poll per 50ms)
 	private ColorSensor ls;
-	private Navigation nav;
 	private double colourVal = 99999;
 	private Colour colour;
 	private Queue<Double> coloursQueue;
@@ -18,9 +17,8 @@ public class LightPoller extends Thread{
 	
 
 	
-	public LightPoller(ColorSensor ls, Navigation nav, Colour colour) {
+	public LightPoller(ColorSensor ls, Colour colour) {
 		this.ls = ls;
-		this.nav = nav;
 		this.colour = colour;
 		
 		initializeQueue();

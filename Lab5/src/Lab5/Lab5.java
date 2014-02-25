@@ -39,7 +39,7 @@ public class Lab5 {
 		LCD.drawString("    to begin    ", 0, 3);
 		
 		// setup the odometer, display, and ultrasonic and light sensors
-		TwoWheeledRobot fuzzyPinkRobot = new TwoWheeledRobot(Motor.A, Motor.B);
+		TwoWheeledRobot fuzzyPinkRobot = new TwoWheeledRobot(Motor.A, Motor.B, Motor.C);
 		Odometer odo = new Odometer(fuzzyPinkRobot, true);
 		UltrasonicSensor us = new UltrasonicSensor(SensorPort.S2);
 		ColorSensor ls = new ColorSensor(SensorPort.S1);
@@ -48,7 +48,7 @@ public class Lab5 {
 		NavigationOur ourNav = new NavigationOur(odo);
 		
 		UltrasonicPoller usPoller = new UltrasonicPoller(us);
-		LightPoller lsPoller = new LightPoller(ls, nav, Colour.BLUE);
+		LightPoller lsPoller = new LightPoller(ls, Colour.BLUE);
 		
 		ObstacleAvoidance avoider = new ObstacleAvoidance(nav, usPoller, odo);
 		
