@@ -48,7 +48,7 @@ public class Lab5_ScanForData {
 		NavigationOur ourNav = new NavigationOur(odo);
 		
 		UltrasonicPoller usPoller = new UltrasonicPoller(us);
-		USLocalizer usLocalizer = new USLocalizer(odo, us, USLocalizer.LocalizationType.RISING_EDGE, ourNav, usPoller);
+		USLocalizer usLocalizer = new USLocalizer(odo, USLocalizer.LocalizationType.RISING_EDGE, ourNav, usPoller);
 
 		// perform the light sensor localization
 		LightPoller lsPoller = new LightPoller( ls, nav, Colour.BLUE);
