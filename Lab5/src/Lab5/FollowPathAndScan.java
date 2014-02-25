@@ -17,6 +17,7 @@ import lejos.geom.Point;
  *This should only execute while Lab5.navigate == true. Else, sleep.
  *
  *TODO: Test FollowPathAndScan
+ *TODO: case where block is on point
  */
 public class FollowPathAndScan extends Thread{
 	Navigation nav;
@@ -66,10 +67,13 @@ public class FollowPathAndScan extends Thread{
 		}
 	}
 	
+	//TODO: move this to uspoller
 	private Queue<PolarCoordinate> collectDistances(){
 		Queue<PolarCoordinate> distanceQueue = new Queue<PolarCoordinate>();
 		while (FollowPathAndScan.usScanning == true){
 			distanceQueue.push(new PolarCoordinate(usPoller.getMedianDistance(), odo.getAng()));
+			try { Thread.sleep(100); } catch(Exception e){}
+			//TODO: timer
 		}
 		return distanceQueue;
 	}
@@ -79,6 +83,11 @@ public class FollowPathAndScan extends Thread{
 	 * Analyzes data and determines coordinates of blocks. 
 	 * Look at changes in distances to see when block starts and ends
 	 * The derivative spike (see class notes)
+	 * 
+	 * TODO: Hard code walls in
+	 * Threshold will be 37 (diagonal of grid square - half of cube width)
+	 * 
+	 * if facing wall, ignore, unless distance is less than wall distance
 	 * 
 	 * TODO: Fill this in
 	 * @param distanceQueue

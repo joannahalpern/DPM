@@ -31,10 +31,11 @@ public class UltrasonicPoller extends Thread{
 	}
 	
 	private void putDistanceInQueue(double distance) {
-		if (distance != 255){
-			distancesQueue.push(distance);
-			distancesQueue.pop();
+		if (distance == 255){
+			distance = 60;
 		}
+		distancesQueue.push(distance);
+		distancesQueue.pop();
 	}
 
 	private void initializeQueue() {

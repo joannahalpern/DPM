@@ -1,9 +1,26 @@
 /*
  * The main things we need to do are:
- * 		- test FollowPathAnd
  * 		- Fill in grabBlock()
- * 		- Fill in dropBlock();
+ * 		- Fill in dropBlock()
+ * 
+ * 		- Fill in calculateBlockCoords
+ * 		- fix obstacleAvoidance - threshold of 45 for first part and 30 for the rest
+ * 
+ * 		- test navigation
+ * 		- get new radius and width
+ * 		- test us localizer
  * 		- test ObjectAvoidance
+ * 
+ * 		- test FollowPathAndScan
+ * 			- follow path while avoiding
+ * 			- scan and identifying block coordinate
+ * 
+ * 		- test identify block
+ * 		- test grab and drop
+ * 
+ * 		check TODOS
+ * 		- integration testing
+ * 
  */
 package Lab5;
 
@@ -81,7 +98,7 @@ public class Lab5 {
 					navigate = false;
 					blockPoint = blockStack.pop();
 					Point currentPoint = new Point( (float) odo.getX(),(float) odo.getY());
-					double blockAngle = (double) currentPoint.angleTo(blockPoint);
+					double blockAngle = (double) currentPoint.angleTo(blockPoint) + 90; //TODO: test angleTo
 					nav.turnTo(blockAngle, true);
 					foamBlockFound = objectDetection.doBlockDetection();
 				}
