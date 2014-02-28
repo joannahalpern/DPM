@@ -3,7 +3,7 @@ package Lab5;
 
 import lejos.nxt.Motor;
 import lejos.nxt.UltrasonicSensor;
-//TODO: add some kind of error-catcher for US readings
+
 public class USLocalizer {
 	public enum LocalizationType { FALLING_EDGE, RISING_EDGE};
 

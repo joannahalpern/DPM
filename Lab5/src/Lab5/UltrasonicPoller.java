@@ -9,7 +9,7 @@ import lejos.nxt.UltrasonicSensor;
 public class UltrasonicPoller extends Thread{
 	public static final int QUEUE_SIZE = 5;
 	public static final long POLLING_PERIOD = 28;
-	public static final double SENSOR_OFFSET = 1; //TODO measure sensor offset
+	public static final double SENSOR_OFFSET = 1;
 	private UltrasonicSensor us;
 	private USLocalizer uSLocalizer;
 	private double distance = 99999;

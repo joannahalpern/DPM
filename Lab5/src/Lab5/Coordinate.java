@@ -47,22 +47,18 @@ public class Coordinate{
 	}
 
 	private double calculateRadius() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	private double calculateAngle() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	private double calculateX() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	private double calculateY() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 

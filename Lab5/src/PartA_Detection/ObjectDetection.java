@@ -1,15 +1,18 @@
 package PartA_Detection;
-
-
-//
-//if block 
+ 
 import Lab5.*;
 import lejos.nxt.*;
 
+/**
+ * This class is used to identify a block. If an object is detected with the ultrasonic sensor within DETECTION_THRESHOLD,
+ * then the robot moves forward until the object is within COLOUR_READING_THRESHOLD. At this point the robot stops and
+ *  does identifyBlock(). If the block is within foam limit, it is identified as a styrofoam block and block=true. 
+ *  Otherwise block=false.
+ */
 public class ObjectDetection extends Thread {
 	private static final double COLOUR_READING_THRESHOLD = 9;
-	private static final double DETECTION_THRESHOLD = 30; //TODO set the detection range
-	private static final double LOWER_FOAM_LIMIT = 380; //TODO set colour thresholds
+	private static final double DETECTION_THRESHOLD = 30;
+	private static final double LOWER_FOAM_LIMIT = 380;
 	private static final double UPPER_FOAM_LIMIT = 540;
 	private static final double LOWER_WOOD_LIMIT = 230;
 	private static final double UPPER_WOOD_LIMIT = LOWER_FOAM_LIMIT;
@@ -38,13 +41,16 @@ public class ObjectDetection extends Thread {
 		}
 	}
 	
+	/**
+	 *  Returns true if styrofoam block is detected and false otherwise
+	 */
 	public boolean doBlockDetection(){
 			if (isBlockinRange(usPoller, DETECTION_THRESHOLD)){
 				objectDetected = true; //LCD will now display "Object Detected"
 
 				//check to see block is close enough to read colour. If not, then move forward.
 				while (!isBlockinRange(usPoller, COLOUR_READING_THRESHOLD)){
-					nav.setSpeeds(50, 50); //TODO: changed nav so need to retest that this works
+					nav.setSpeeds(50, 50);
 				}
 				nav.setSpeeds(0, 0);//stop
 				blockType = identifyBlock(lsPoller);
@@ -66,8 +72,11 @@ public class ObjectDetection extends Thread {
 			return block;
 	}
 
+	/**
+	 * returns true if ultrasonc sensor detects that block is within given threshold. Else returns false
+	 */
 	public boolean isBlockinRange(UltrasonicPoller usPoller, double threshold){
-		double distance = usPoller.getMeanDistance(); //TODO: change to median but test it first
+		double distance = usPoller.getMedianDistance(); 
 		if (distance< threshold){
 			return true;
 		}

@@ -5,13 +5,9 @@ package Lab5;
  * if us sensor sees something within threshold, it stops navigation (navigation = false), and turns right.
  * It then checks if something's in front, if it is it turns right again. If not, moves forward an amount d (d should be bigger than a block),
  * then it sets navigation to true again. (some of this should be in a synchronized lock)
- * 
- * if block is detected near coordinate, obstacle avoidance should stop (Lab5.obstacleAvoidance = false)
- * 
- * TODO test ObstacleAvoidance
  */
 public class ObstacleAvoidance extends Thread {
-	private static final double BLOCK_THRESHOLD = 30;
+	private double blockThreshold;
 	Navigation nav;
 	UltrasonicPoller usPoller;
 	Odometer odo;
@@ -21,6 +17,7 @@ public class ObstacleAvoidance extends Thread {
 		this.nav = nav;
 		this.usPoller = usPoller;
 		this.odo = odo;
+		this.blockThreshold = 43;
 	}
 	
 	public void run(){
@@ -28,18 +25,18 @@ public class ObstacleAvoidance extends Thread {
 	}
 	public void avoidObstacles(){
 		while (Lab5.obstacleAvoidance == true){
-			if (isBlockinRange(usPoller, BLOCK_THRESHOLD)){
+			if (isBlockinRange(usPoller, blockThreshold)){
 				
 				synchronized (Lab5.lock) {
 					Lab5.navigate = false;
 					do{
 						nav.turnTo( (90+odo.getAng()), true);
-					} while (isBlockinRange(usPoller, BLOCK_THRESHOLD));
-					nav.goForward(BLOCK_THRESHOLD-2); //TODO adjust distance
+					} while (isBlockinRange(usPoller, blockThreshold));
+					nav.goForward(blockThreshold-2);
 					Lab5.navigate = true;
 				}
 			}
-			try { Thread.sleep(500); } catch(Exception e){} //TODO adjust sleep time
+			try { Thread.sleep(500); } catch(Exception e){}
 			
 		}
 	}
@@ -51,5 +48,9 @@ public class ObstacleAvoidance extends Thread {
 			return true;
 		}
 		return false;
+	}
+	
+	public void setBlockThreshold(double blockThreshod){
+		this.blockThreshold = blockThreshod;
 	}
 }

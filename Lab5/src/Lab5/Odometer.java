@@ -1,7 +1,6 @@
 package Lab5;
 
 
-import Testing.Lab5_ScanForData;
 import lejos.util.Timer;
 import lejos.util.TimerListener;
 
@@ -25,7 +24,7 @@ public class Odometer implements TimerListener {
 		theta = 0.0;
 		oldDH = new double [2];
 		dDH = new double [2];
-		lock = Lab5_ScanForData.lock;
+		lock = Lab5.lock;
 		
 		// start the odometer immediately, if necessary
 		if (start)

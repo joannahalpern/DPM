@@ -1,27 +1,3 @@
-/*
- * The main things we need to do are:
- * 		- Fill in grabBlock()
- * 		- Fill in dropBlock()
- * 
- * 		- Fill in calculateBlockCoords
- * 		- fix obstacleAvoidance - threshold of 45 for first part and 30 for the rest
- * 
- * 		- test navigation
- * 		- get new radius and width
- * 		- test us localizer
- * 		- test ObjectAvoidance
- * 
- * 		- test FollowPathAndScan
- * 			- follow path while avoiding
- * 			- scan and identifying block coordinate
- * 
- * 		- test identify block
- * 		- test grab and drop
- * 
- * 		check TODOS
- * 		- integration testing
- * 
- */
 package Lab5;
 
 import java.util.Stack;
@@ -36,13 +12,23 @@ import lejos.nxt.*;
 import lejos.geom.Point;
 import PartA_Detection.*;
 
+/**
+ * Robot follows a path (ie. goes to 4 coordinates). It does obstacle avoidance while going from one point to the next.
+ * At the point, the robot does a 180 degree scan to detect all obstacles (see FollowPathAndScan class for more details)
+ * If there are any blocks identified (wooden or styrofoam), the coordinates of the middle of that block are put in the
+ * blockStack. The robot then goes to each block coordinate in that stack and does object detection to see if the block
+ * is styrofoam (see ObjectDetection class for details). Once it confirms that it has identified a styrofoam block,
+ * the robot grabs the block then travels to the drop zone where it then drops the block.
+ *
+ */
 public class Lab5 {
 	public static Stack<Point> blockStack = new Stack<Point>(); //Add element type
-	public static boolean navigate = true; //global variable
-	public static boolean identifyingBlock = false;
-	public static boolean foamBlockFound = false;
-	public static boolean obstacleAvoidance = false;
-	public static Point blockPoint = new Point(0, 0);
+	public static boolean navigate = true; //true when robot is traveling
+	public static boolean identifyingBlock = false; //true when robot is doing ObjectDetection
+	public static boolean foamBlockFound = false; 
+	public static boolean obstacleAvoidance = false; //true when robot is doing obstacleAvoidance
+	public static Point blockPoint = new Point(0, 0); //calculated coordinate of block (determined in FollowPathAndScan
+	
 	/* Create an object that can be used for synchronization across threads. */
 	static class theLock extends Object {//this is a lock
 	}
@@ -55,7 +41,7 @@ public class Lab5 {
 		LCD.drawString("   Press left   ", 0, 2);
 		LCD.drawString("    to begin    ", 0, 3);
 		
-		// setup the odometer, display, and ultrasonic and light sensors
+		// setup the odometer, display, and ultrasonic and light sensor, motors ...
 		TwoWheeledRobot fuzzyPinkRobot = new TwoWheeledRobot(Motor.A, Motor.B, Motor.C);
 		Odometer odo = new Odometer(fuzzyPinkRobot, true);
 		UltrasonicSensor us = new UltrasonicSensor(SensorPort.S2);
@@ -84,7 +70,7 @@ public class Lab5 {
 		switch(option) {
 		case Button.ID_LEFT:
 			try { Thread.sleep(1000); } catch(Exception e){}
-			usPoller.start(); //TODO: change pollers to implement TimerListenner. Have them start in their constructors
+			usPoller.start();
 			lsPoller.start();
 			odo.setPosition(new double[]{30.48, 30.48, 0}, new boolean[]{true, true, true}); //set odometer to start at first square's corner
 			localizer.doLocalization();
@@ -98,7 +84,7 @@ public class Lab5 {
 					navigate = false;
 					blockPoint = blockStack.pop();
 					Point currentPoint = new Point( (float) odo.getX(),(float) odo.getY());
-					double blockAngle = (double) currentPoint.angleTo(blockPoint) + 90; //TODO: test angleTo
+					double blockAngle = (double) currentPoint.angleTo(blockPoint) + 90;
 					nav.turnTo(blockAngle, true);
 					foamBlockFound = objectDetection.doBlockDetection();
 				}
@@ -106,7 +92,7 @@ public class Lab5 {
 		//foamBlockFound will be true now
 			grabBlock();
 
-			nav.travelTo(106.68, 228.6);
+			nav.travelTo(106.68, 228.6); //drop zone
 			dropBlock();
 			break;
 		default:
@@ -122,20 +108,19 @@ public class Lab5 {
 	
 	/**
 	 * claw releases block
-	 *
-	 *TODO: fill in dropBlock()
 	 */
 	private static void dropBlock() {
+		Motor.C.rotate(90);
 	}
 
 	/**
-	 * The robot needs to turn around and grab the block with the claw
-	 * 
-	 * TODO: fill in grabBlock()
+	 * Claw of robot grabs block
 	 */
 	private static void grabBlock() {
+		Motor.C.rotate(-90);
 	}
 
+	//for testing
 	private static void initializeRConsole() {
 		RConsole.openUSB(20000);
 		RConsole.println("Connected");
