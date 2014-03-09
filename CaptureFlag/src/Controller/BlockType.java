@@ -1,4 +1,4 @@
-package Lab5;
+package Controller;
 
 
 public enum BlockType {
