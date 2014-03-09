@@ -1,10 +1,8 @@
 package Lab5;
 
-
 import java.util.Queue;
 import PartA_Detection.Lab5_PartA;
 import lejos.nxt.ColorSensor;
-
 
 public class LightPoller extends Thread{
 	public static final int QUEUE_SIZE = 9;
@@ -13,9 +11,6 @@ public class LightPoller extends Thread{
 	private double colourVal = 99999;
 	private Colour colour;
 	private Queue<Double> coloursQueue;
-	
-	
-
 	
 	public LightPoller(ColorSensor ls, Colour colour) {
 		this.ls = ls;

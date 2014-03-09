@@ -26,8 +26,4 @@ public class LocalizationAtOrigin {
 
 	public static void localizeFromOrigin(){
 	}
-
-
-
-
 }
